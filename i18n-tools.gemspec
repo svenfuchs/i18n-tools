@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "i18n-tools"
-  s.version = "0.0.2"
+  s.version = "0.0.3"
   s.date = "2009-05-26"
   s.summary = "Tools for Ruby/Rails I18n"
   s.email = "rails-i18n@googlegroups.com"
@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
     'test/ruby_parser_test.rb',
     'test/test_helper.rb'
   ]
-  s.add_dependency('visionmedia-commander', ['= 2.5.7'])
+  s.add_dependency('visionmedia-commander', ['= 3.2.9'])
   s.executables = ['i18n-keys']
   s.default_executable = 'i18n-keys'
 end
