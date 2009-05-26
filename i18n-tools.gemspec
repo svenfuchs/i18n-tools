@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "i18n-tools"
-  s.version = "0.0.1"
+  s.version = "0.0.2"
   s.date = "2009-05-26"
   s.summary = "Tools for Ruby/Rails I18n"
   s.email = "rails-i18n@googlegroups.com"
