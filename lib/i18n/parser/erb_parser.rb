@@ -7,7 +7,7 @@ $KCODE = 'u'
 
 class String
   def to_whitespace
-    gsub(/\S/, ' ')
+    gsub(/[^\s;]/, ' ')
   end
 end
 
@@ -15,8 +15,8 @@ module I18n
   class ErbParser
     class Scanner < ERB::Compiler::Scanner
       def scan
-        stag_reg = /(.*?)(^[ \t]*<%-|<%%|<%=|<%#|<%-|<%|\z)/m
-        etag_reg = /(.*?)(%%>|-%>|%>|\z)/m
+        stag_reg = /(.*?)(^[ \t]*<%%|<%=|<%#|<%-|<%|\z)/m
+        etag_reg = /(.*?)(%%>|\-%>|%>|\z)/m
         scanner = StringScanner.new(@src)
         while !scanner.eos?
           scanner.scan(@stag ? etag_reg : stag_reg)
@@ -35,9 +35,9 @@ module I18n
         comment = true if token == '<%#'
         if scanner.stag.nil?
           result << token.to_whitespace
-          scanner.stag = token if ['<%', '<%-', '<%=', '<%#', "\n"].include?(token)
+          scanner.stag = token if ['<%', '<%-', '<%=', '<%#'].include?(token)
         elsif ['%>', '-%>'].include?(token)
-          result << token.to_whitespace
+          result << token.gsub(/>/, ';').to_whitespace
           scanner.stag = nil
         else
           result << (comment ? token.to_whitespace : token) # so, this is the ruby code, then

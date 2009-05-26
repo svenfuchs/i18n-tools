@@ -174,8 +174,8 @@ module I18n
       
         def find_occurences(options)
           files.inject([]) do |result, file|
-            calls = parse(file).find_by_type(:call).select { |call| call[2] == :t }
-            calls.inject(result) do |result, node|
+            code = parse(file) || Sexp.new
+            code.find_by_type(:call).select { |call| call[2] == :t }.inject(result) do |result, node|
               node.each_key_node { |key| result << Occurence.from_sexp(key, file) }
               result
             end
