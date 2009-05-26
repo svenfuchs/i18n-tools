@@ -1,0 +1,19 @@
+<html>
+<ul>
+<% [:foo].each do |foo| %>
+	<li>
+
+		<span><%= t(:erb_1) %></span>
+		<%#= comment
+		     comment
+		     comment  %>
+	</li>
+<% end %>
+<br>
+
+<%- t(:erb_2) -%>
+
+<%- t(:'foo.erb_3') -%>
+
+</ul>
+</html>

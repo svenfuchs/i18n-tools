@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander'
+require File.dirname(__FILE__) + '/../lib/i18n/keys'
+require File.dirname(__FILE__) + '/../lib/i18n/keys/commands'
