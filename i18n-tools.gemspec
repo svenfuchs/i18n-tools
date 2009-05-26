@@ -9,7 +9,6 @@ Gem::Specification.new do |s|
   s.has_rdoc = false
   s.authors = ['Sven Fuchs']
   s.files = [
-    'i18n.gemspec',
     'bin/i18n-keys',
     'lib/ansi.rb',
     'lib/i18n/keys/commands.rb',
