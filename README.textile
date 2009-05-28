@@ -1,1 +1,0 @@
-to turn off filename generation in zsh: unsetopt GLOB
