@@ -156,8 +156,15 @@ module I18n
       end
       
       def replace!(occurence, replacement)
+        replacement = replacement.to_sym
+
+        # TODO update @keys as well or remove it
+        @by_key.delete(occurence.key)
+        @by_key[replacement] ||= []
+        @by_key[replacement] << occurence
+
         occurence.replace!(replacement)
-        save if exists?
+        save if built?
       end
 
       def marshal_dump
@@ -194,9 +201,10 @@ module I18n
         
         def key_pattern(key)
           key = key.to_s.dup
+          match_start = key.gsub!(/^\*/, '') ? '' : '^'
           match_end = key.gsub!(/\*$/, '') ? '' : '$'
           pattern = Regexp.escape("#{key}")
-          /^#{pattern}#{match_end}/
+          /#{match_start}#{pattern}#{match_end}/
         end
 
         def parse(file)

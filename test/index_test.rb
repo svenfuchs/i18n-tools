@@ -108,28 +108,35 @@ class IndexTest < Test::Unit::TestCase
   end
 
   def test_key_pattern_with_no_wild_cards_returns_a_pattern_matching_only_the_key
-    index = Keys::Index.new
-    assert_equal /^foo\.bar$/, index.send(:key_pattern, :'foo.bar')
+    assert_equal /^foo\.bar$/, Keys::Index.new.send(:key_pattern, :'foo.bar')
   end
 
-  def test_key_pattern_with_a_dot_separated_wild_card_at_the_end_returns_a_pattern_matching_all_keys_starting_with_key
-    index = Keys::Index.new
-    assert_equal /^foo\.bar\./, index.send(:key_pattern, :'foo.bar.*')
+  def test_key_pattern_with_a_dot_separated_wildcard_at_the_beginning
+    assert_equal /\.foo\.bar$/, Keys::Index.new.send(:key_pattern, :'*.foo.bar')
+  end
+
+  def test_key_pattern_with_a_dot_separated_wildcard_at_the_end
+    assert_equal /^foo\.bar\./, Keys::Index.new.send(:key_pattern, :'foo.bar.*')
+  end
+
+  def test_key_pattern_with_a_dot_separated_wildcard_at_the_beginning_and_end
+    assert_equal /\.foo\.bar\./, Keys::Index.new.send(:key_pattern, :'*.foo.bar.*')
   end
   
   def test_replace_replaces_key_without_wildcard_in_source_file
     index = Keys::Index.create(:replace)
     bar = index.by_key[:bar].first
+
     index.replace!(bar, 'foo')
     assert_equal "    t(:foo)\n", bar.line
-    
+
     index = Keys::Index.load(:replace)
-    foo = index.by_key[:bar].first
+    foo = index.by_key[:foo].first
     assert foo == bar
   end
   
   # TODO
-  # - after replace make sure the index is updated
-  # - somehow also update the yaml/rb files
+  # - output feedback on replace when --verbose is on
+  # - update the yaml/rb files
   
 end

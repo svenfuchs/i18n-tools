@@ -4,6 +4,7 @@ module I18n
       module Formatter
         module Setup
           def setup(target)
+            $stdout.sync = true
             (class << target; self; end).send(:include, self)
           end
         end
@@ -12,7 +13,7 @@ module I18n
           extend Setup
 
           def build(*args)
-            puts "building index \"#{name}\"" if I18n::Keys.verbose?
+            puts "indexing files" if I18n::Keys.verbose?
             super
             puts "\nfound #{occurences.size} occurences of #{keys.size} keys in #{files.size} files" if I18n::Keys.verbose?
           end

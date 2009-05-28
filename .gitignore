@@ -1,2 +1,4 @@
 .i18n
 .DS_Store
+tmp
+bin/i18n-keys-test
