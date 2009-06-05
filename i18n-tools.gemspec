@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
     'lib/i18n/keys/commands.rb',
     'lib/i18n/keys/formatter.rb',
     'lib/i18n/keys/index.rb',
-    'lib/i18n/keys/occurence.rb',
+    'lib/i18n/keys/call.rb',
     'lib/i18n/keys.rb',
     'lib/i18n/parser/erb_parser.rb',
     'lib/i18n/parser/ruby_parser.rb',
@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
     'test/fixtures/template.html.erb',
     'test/index_test.rb',
     'test/keys_test.rb',
-    'test/occurence_test.rb',
+    'test/call_test.rb',
     'test/ruby_parser_test.rb',
     'test/test_helper.rb'
   ]

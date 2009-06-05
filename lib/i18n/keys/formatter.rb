@@ -2,6 +2,18 @@ module I18n
   module Keys
     class Index
       module Formatter
+        @@verbose = true # remove this class var dependency
+    
+        class << self
+          def verbose?
+            @@verbose
+          end
+
+          def verbose=(verbose)
+            @@verbose = !!verbose
+          end
+        end
+
         module Setup
           def setup(target)
             $stdout.sync = true
@@ -11,26 +23,30 @@ module I18n
 
         module Stdin
           extend Setup
+          
+          def verbose?
+            Formatter.verbose?
+          end
 
           def build(*args)
-            puts "indexing files" if I18n::Keys.verbose?
+            puts "indexing files" if verbose?
             super
-            puts "\nfound #{occurences.size} occurences of #{keys.size} keys in #{files.size} files" if I18n::Keys.verbose?
+            puts "\nfound #{calls.size} occurences of #{keys.size} keys in #{files.size} files" if verbose?
           end
 
           def save
-            puts "saving index \"#{name}\"" if I18n::Keys.verbose?
+            puts "saving index \"#{name}\"" if verbose?
             super
           end
 
           def parse(file)
-            # puts "  parsing #{file}" if I18n::Keys.verbose?
-            putc '.' if I18n::Keys.verbose?
+            # puts "  parsing #{file}" if verbose?
+            putc '.' if verbose?
             super
           end
 
           # def each(*keys)
-          #   puts "iterating occurences of: #{keys.map { |key| key.to_sym.inspect }.join(', ')}" if I18n::Keys.verbose?
+          #   puts "iterating occurences of: #{keys.map { |key| key.to_sym.inspect }.join(', ')}" if verbose?
           #   super
           # end
         end

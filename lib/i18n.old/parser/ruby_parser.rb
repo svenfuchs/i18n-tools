@@ -5,41 +5,6 @@ require 'ruby_parser'
 # monkey patch galore, adds the ability to inspect the original source code
 # that a :lit or :str sexp was parsed from
 
-Sexp.class_eval do
-  attr_accessor :full_source, :source_start_pos, :source_end_pos
-  
-  def value
-    self[1]
-  end
-
-  def source_range
-    source_start_pos..source_end_pos if source_start_pos && source_end_pos
-  end
-
-  def source
-    full_source[source_range] if full_source && source_range
-  end
-  
-  def find_by_type(type)
-    nodes = []
-    nodes << self if self.first == type
-    each_of_type(type) { |node| nodes << node }
-    nodes
-  end
-  
-  def each_key_node(&block)
-    each do |element|
-      next unless Sexp === element
-      element.each_key_node(&block)
-      block.call(element) if element.is_key_node?
-    end
-  end
-  
-  def is_key_node?
-    first == :str || first == :lit && self[1].is_a?(Symbol)
-  end
-end
-
 RubyLexer.class_eval do
   attr_accessor :source_start_pos, :source_end_pos
 
@@ -60,6 +25,27 @@ module I18n
 
       result
     end
+
+    def _reduce_283(val, _values, result)
+      # if val[1] && val[1][0] == :array
+      #   p val, _values, result
+      # end
+      super
+    end
+
+    # def _reduce_261(val, _values, result)
+    #     p val, _values, result
+    #     p '-----------'
+    #   # lexer.source_start_pos = lexer.src.pos - lexer.yacc_value.size - 1
+    #   # result = s(:array, val[0])
+    #   # result
+    #   result = super
+    #   # if result.first == :array
+    #   #   p val, _values, result
+    #   #   p '-----------'
+    #   # end
+    #   result
+    # end
 
     # :tSYMBOL
     def _reduce_380(val, _values, result)

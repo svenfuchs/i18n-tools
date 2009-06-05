@@ -10,7 +10,7 @@ command :find do |c|
   c.when_called do |args, options|
     I18n::Keys.verbose = options.verbose
     index = I18n::Keys.index(:index => options.index)
-    index.each(*args.map { |arg| arg.dup }) { |occurence| puts occurence.to_s }
+    index.each(*args.map { |arg| arg.dup }) { |call| puts call.to_s }
   end
 end
 
@@ -30,10 +30,10 @@ command :replace do |c|
     
     @found = false
     index = I18n::Keys.index(:index => options.index)
-    index.each(search.dup, replacement.dup) do |occurence|
-      if I18n::Commands.replace?(occurence, replacement, :interactive => interactive)
+    index.each(search.dup, replacement.dup) do |call|
+      if I18n::Commands.replace?(call, replacement, :interactive => interactive)
         @found = true
-        index.replace!(occurence, replacement) 
+        index.replace!(call, replacement) 
       end
     end
     
@@ -44,10 +44,10 @@ end
 module I18n
   module Commands
     class << self
-      def replace?(occurence, replacement, options = {:interactive => true})
+      def replace?(call, replacement, options = {:interactive => true})
         return true if @all
         return false if @cancelled
-        case answer = I18n::Commands.confirm_replacement(occurence, replacement)[0, 1]
+        case answer = I18n::Commands.confirm_replacement(call, replacement)[0, 1]
         when 'a'
           @all = true
         when 'c'
@@ -57,9 +57,9 @@ module I18n
         end
       end
 
-      def confirm_replacement(occurence, replacement)
-        puts occurence.to_s, occurence.context
-        msg = "Replace this occurence of the key \"#{occurence.key}\" with \"#{replacement}\"? [Y]es [N]o [A]ll [C]ancel"
+      def confirm_replacement(call, replacement)
+        puts call.to_s, call.context
+        msg = "Replace this occurence of the key \"#{call.key}\" with \"#{replacement}\"? [Y]es [N]o [A]ll [C]ancel"
         answer = ask(msg, %w(y yes n no a all c cancel)) do |q|
           q.case = :downcase
           q.readline = true

@@ -1,8 +1,7 @@
-require 'yaml'
-require File.dirname(__FILE__) + '/formatter'
-require File.dirname(__FILE__) + '/occurence'
+require 'i18n/keys/formatter'
+require 'i18n/ripper/ruby_builder'
 
-# Keys.index(:default, :pattern => '/**/*.{rb,erb}').each(:foo, :bar) { |occurence| ... }
+# Index.new(project, :default, :pattern => '/**/*.{rb,erb}').each(:foo, :bar) { |call| ... }
 #
 # when the :index name is not given it creates the index on the fly but won't save it
 # when the :index name is true it uses :default as an index name
@@ -21,59 +20,11 @@ module I18n
 
       @@formatter = Formatter::Stdin
       @@default_pattern = '/**/*.{rb,erb}'
+      @@default_parser = I18n::Ripper::RubyBuilder
 
-      class << self
-        def load_or_create_or_init(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          name = TrueClass === args.first ? :default : args.first
-          index = name ? load_or_create(name, options) : new(name, options)
-          index
-        end
+      attr_reader :project, :name, :parser
 
-        def load_or_create(*args)
-          options = args.last.is_a?(Hash) ? args.pop : {}
-          name = args.first || :default
-          exists?(name) ? load(name) : create(name, options)
-        end
-
-        def create(*args)
-          index = new(*args)
-          index.update
-          index
-        end
-
-        def load(name)
-          File.open(filename(name), 'r') { |f| Marshal.load(f) } if exists?
-        end
-
-        def mk_dir
-          FileUtils.mkdir_p(store_dir) unless exists?
-        end
-
-        def exists?(name = nil)
-          name ? File.exists?(filename(name)) : File.exists?(store_dir)
-        end
-
-        def delete(name)
-          new(name).delete
-        end
-
-        def delete_all
-          FileUtils.rm_r(store_dir) if exists? rescue Errno::ENOENT
-        end
-
-        def filename(name)
-          store_dir + "/#{name.to_s}.marshal"
-        end
-
-        def store_dir
-          File.expand_path(Keys.meta_dir + '/indizes')
-        end
-      end
-
-      attr_reader :name
-
-      [:keys, :occurences, :by_key].each do |name|
+      [:keys, :calls, :by_key].each do |name|
         class_eval <<-code
           def #{name}             # def key
             build unless built?   #   build unless built?
@@ -82,10 +33,12 @@ module I18n
         code
       end
 
-      def initialize(*args)
-        options = args.last.is_a?(Hash) ? args.pop : {}
-        @name = args.first || :default
+      def initialize(project, name = nil, options = {})
+        @project, @name = project, name || :default
+        
         @pattern = options[:pattern] || @@default_pattern
+        @parser = options[:parser] || @@default_parser
+
         reset!
         @@formatter.setup(self) if @@formatter
       end
@@ -93,7 +46,7 @@ module I18n
       def reset!
         @built = false
         @keys = []
-        @occurences = []
+        @calls = []
         @by_key = {}
       end
 
@@ -101,11 +54,11 @@ module I18n
         @built
       end
 
-      def build(options = {})
-        @occurences = find_occurences(options)
-        @occurences.each do |occurence|
-          @keys << occurence.key
-          (@by_key[occurence.key] ||= []) << occurence
+      def build
+        @calls = find_calls
+        @calls.each do |call|
+          @keys << call.key
+          (@by_key[call.key] ||= []) << call # uh, Argument.hash doesn't seem to work??
         end
         @built = true
       end
@@ -115,13 +68,13 @@ module I18n
       end
 
       def save
-        self.class.mk_dir
+        project.indices.mk_dir
         File.open(filename, 'w+') { |f| Marshal.dump(self, f) }
       end
 
-      def update(options = {})
+      def update
         reset!
-        build(options)
+        build
         save
       end
 
@@ -130,11 +83,11 @@ module I18n
       end
 
       def filename
-        self.class.filename(name)
+        project.indices.filename(name)
       end
 
       def files
-        Dir[Keys.root + pattern]
+        Dir[File.expand_path(project.root_dir) + pattern]
       end
 
       def pattern
@@ -142,75 +95,70 @@ module I18n
       end
 
       def config
-        @config ||= Keys.config['indices'][name] || { }
+        @config ||= project.config['indices'][name] || { }
       end
-      
+
       def each(*keys)
         patterns = key_patterns(keys)
-        occurences.each { |occurence| yield(occurence) if key_matches?(occurence.key, patterns) }
+        calls.each { |call| yield(call) if key_matches?(call.key, patterns) }
       end
-      
+
       def inject(memo, *keys)
-        each(*keys) { |occurence| yield(memo, occurence) }
+        each(*keys) { |call| yield(memo, call) }
         memo
       end
-      
-      def replace!(occurence, replacement)
+
+      def replace!(call, replacement)
         replacement = replacement.to_sym
 
         # TODO update @keys as well or remove it
-        @by_key.delete(occurence.key)
+        @by_key.delete(call.key)
         @by_key[replacement] ||= []
-        @by_key[replacement] << occurence
+        @by_key[replacement] << call
 
-        occurence.replace!(replacement)
+        call.replace!(replacement)
         save if built?
       end
 
       def marshal_dump
-        keys = :name, :pattern, :keys, :occurences, :by_key
+        keys = :name, :pattern, :keys, :calls, :by_key
         keys.inject({ :built => built? }) { |result, key| result[key] = send(key); result }
       end
 
       def marshal_load(data)
-        keys = :name, :pattern, :keys, :occurences, :by_key, :built
+        keys = :name, :pattern, :keys, :calls, :by_key, :built
         keys.each { |key| instance_variable_set(:"@#{key}", data[key]) }
       end
 
       protected
-      
-        def find_occurences(options)
+
+        def find_calls
           files.inject([]) do |result, file|
-            code = parse(file) || Sexp.new
-            code.find_by_type(:call).select { |call| call[2] == :t }.inject(result) do |result, node|
-              node.each_key_node { |key| result << Occurence.from_sexp(key, file) }
-              result
-            end
+            result += parse(file).translate_calls
           end
         end
-        
+
+        def parse(file)
+          source = File.read(file)
+          parser.new(source, file).tap { |parser| parser.parse }
+        end
+
         def key_matches?(subject, key_patterns)
-          key_patterns.empty? || key_patterns.any? do |key, pattern| 
+          key_patterns.empty? || key_patterns.any? do |key, pattern|
             subject.to_sym == key || subject.to_s =~ pattern
           end
         end
-        
+
         def key_patterns(keys)
           keys.inject({}) { |result, key| result[key] = key_pattern(key); result }
         end
-        
+
         def key_pattern(key)
           key = key.to_s.dup
           match_start = key.gsub!(/^\*/, '') ? '' : '^'
           match_end = key.gsub!(/\*$/, '') ? '' : '$'
           pattern = Regexp.escape("#{key}")
           /#{match_start}#{pattern}#{match_end}/
-        end
-
-        def parse(file)
-          source = File.read(file)
-          source = ErbParser.new.to_ruby(source) if File.extname(file) == '.erb'
-          RubyParser.new.parse(source)
         end
     end
   end

@@ -14,10 +14,10 @@ I18n Keys Source Parser
 	
 **Key Pattern**	
 
-	foo   - finds all occurences of the key 'foo'
-	foo*  - finds all occurences of keys starting with 'foo'
-	*foo  - finds all occurences of keys ending with 'foo'
-	*foo* - finds all occurences of keys containing 'foo'
+	foo   - finds all calls to I18n.t with the key 'foo'
+	foo*  - finds all calls to I18n.t with keys starting with 'foo'
+	*foo  - finds all calls to I18n.t with keys ending with 'foo'
+	*foo* - finds all calls to I18n.t with keys containing 'foo'
 	
 	In most situations it might make sense to also use a dot, as in:
 	foo.*, *.foo, *.foo.*
