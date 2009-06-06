@@ -20,7 +20,7 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     
     assert_equal call, args.parent
     assert_equal args, string.parent
-    assert_equal src, string.src
+    assert_equal src, string.root.src
   end
   
   define_method :"test method call: t('foo') (single-quoted string)" do

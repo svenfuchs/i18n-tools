@@ -24,7 +24,7 @@ module Ruby
       keys == full_key[0, keys.length]
     end
     
-    def replace!(search, replacement)
+    def replace_key!(search, replacement)
       original_length = length
       key = normalize_keys(self.key)
       scope = normalize_keys(nil, self.scope)
@@ -39,9 +39,9 @@ module Ruby
         self << Ruby::Hash.new unless self.last.is_a?(Ruby::Hash)
         last[:scope] = from_ruby("{ :scope => #{scope.inspect} }").assocs.first.value
       end
-      
-      first.value = eval(":#{key.map { |k| k.to_s }.join('.')}")
-      src[src_pos, original_length] = to_ruby
+      first.token = eval(":#{key.map { |k| k.to_s }.join('.')}")
+
+      root.replace_src(row, column, original_length, to_ruby)
     end
     
     def from_ruby(src)

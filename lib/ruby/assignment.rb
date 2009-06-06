@@ -9,6 +9,10 @@ module Ruby
       @right = right.tap { |c| c.parent = self }
     end
     
+    def children
+      [left, right]
+    end
+    
     def position
       @position ||= [left.row, left.column - 1]
     end
@@ -24,6 +28,10 @@ module Ruby
     def initialize(position = :left, refs = [])
       @position = position
       @refs = refs.each { |r| r.parent = self }
+    end
+    
+    def children
+      refs
     end
     
     def <<(ref)

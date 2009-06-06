@@ -1,7 +1,7 @@
 module Ruby
   class Float < Identifier
-    def initialize(value, position = nil)
-      super(value.to_f, position)
+    def value
+      token.to_f
     end
     
     def to_ruby

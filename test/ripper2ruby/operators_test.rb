@@ -25,7 +25,7 @@ class RipperToRubyOperatorsTest < Test::Unit::TestCase
     assert_equal program, expr.parent
     assert_equal Ruby::Unary, expr.class
     assert_equal operator, expr.operator
-    assert_equal options[:value] || 1, expr.value.value
+    assert_equal options[:value] || 1, expr.operand.value
     
     assert_operator(expr, src, options)
   end

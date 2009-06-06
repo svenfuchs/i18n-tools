@@ -17,13 +17,18 @@ module Ruby
       '__LINE__' => '__LINE__'
     }
     
-    def initialize(value, position = nil)
-      raise("unsupported keyword: #{value}") unless @@keywords.has_key?(value)
-      super(@@keywords[value], position)
+    def initialize(token, position = nil)
+      super
+      raise("unsupported keyword: #{token}") unless @@keywords.has_key?(token)
+    end
+    
+    def value
+      @@keywords[token]
     end
     
     def to_ruby
-      @@keywords.invert[value]
+      token
+      # @@keywords.invert[token]
     end
   end
 end

@@ -2,31 +2,48 @@ module Ruby
   class Node
     include Ansi
 
-    attr_reader :parent, :position, :filename
+    attr_reader :parent, :filename, :children
 
-    def initialize(position, filename = nil)
+    def initialize(position = nil, filename = nil)
       @position = position
       @filename = filename
+      @children = []
     end
     
     def parent=(parent)
       @parent = parent
     end
     
+    def position
+      @position or raise("position not set in #{self.inspect}")
+    end
+    
     def row
-      position[0] rescue raise("position not set in #{self.inspect}")
+      position[0]
     end
 
     def column
-      position[1] rescue raise("position not set in #{self.inspect}")
+      position[1]
     end
 
     def length
       to_ruby.length
     end
+    
+    def root?
+      parent.nil?
+    end
+    
+    def root
+      root? ? self : parent.root
+    end
 
+    def src_pos
+      line_pos(row) + column
+    end
+    
     def src
-      parent ? parent.src : @src
+      root? ? @src : line[column, length]
     end
 
     def filename
@@ -34,7 +51,11 @@ module Ruby
     end
 
     def lines
-      @lines ||= src.split("\n")
+      root.src.split("\n")
+    end
+    
+    def line_pos(row)
+      (row > 0 ? lines[0..(row - 1)].inject(0) { |pos, line| pos + line.length + 1 } : 0)
     end
 
     # TODO what if a node spans multiple lines (like a block, method definition, ...)?
@@ -58,10 +79,6 @@ module Ruby
       max > row ? lines[(row + 1)..max] : []
     end
 
-    def src_pos
-      (row > 0 ? lines[0..(row - 1)].inject(0) { |pos, line| pos + line.length + 1 } : 0) + column
-    end
-
     # all content that precedes the node in the first line of the node in source
     def line_head
       line[0..(column - 1)].to_s
@@ -71,5 +88,17 @@ module Ruby
     def line_tail
       line[(column + length - 1)..-1].to_s
     end
+    
+    protected
+    
+      def position_from(node, column_offset = 0)
+        @position = node.position.dup
+        @position[1] -= column_offset
+      end
+      
+      def update_positions(row, column, offset_column)
+        position[1] += offset_column if self.row == row && self.column > column
+        children.each { |c| c.update_positions(row, column, offset_column) }
+      end
   end
 end

@@ -1,20 +1,20 @@
 require 'ruby/node'
 
 module Ruby
-  class Call < Node
-    attr_accessor :target, :identifier, :block
+  class Call < Identifier
+    attr_accessor :target, :block
 
     def initialize(target, identifier, arguments = nil)
       target = Unsupported.new(target) if target && !target.is_a?(Node)
-      identifier = Unsupported.new(identifier) if identifier && !identifier.is_a?(Node)
+
+      super(identifier.token, identifier.position)
 
       @target = target
-      @identifier = identifier
       self.arguments = arguments.tap { |a| a.parent = self } if arguments
     end
     
-    def position
-      identifier.position
+    def children
+      [target, arguments, block].compact
     end
     
     def arguments
@@ -32,27 +32,31 @@ module Ruby
     def to_ruby
       ruby = ''
       ruby << target.to_ruby + '.' if target
-      ruby << identifier.to_ruby + arguments.to_ruby
+      ruby << super + arguments.to_ruby
       ruby << block.to_ruby if block
       ruby
     end
   end
 
   class ArgsList < Node
-    attr_accessor :parentheses, :values
+    attr_accessor :parentheses, :args
     
-    def initialize(values = [], parentheses = false)
+    def initialize(args = [], parentheses = false)
       @parentheses = parentheses
-      @values = values.each { |v| v.parent = self }
+      @args = args.each { |a| a.parent = self }
+    end
+    
+    def children
+      args
     end
     
     def position
       @position ||= first.position.dup.tap { |p| p[1] -= 1 }
     end
     
-    def <<(value)
-      value = Unsupported.new(value) if value && !value.is_a?(Node)
-      @values << value.tap { |v| v.parent = self }
+    def <<(arg)
+      arg = Unsupported.new(arg) if arg && !arg.is_a?(Node)
+      @args << arg.tap { |v| v.parent = self }
       self
     end
 
@@ -68,7 +72,7 @@ module Ruby
     end
     
     def method_missing(method, *args, &block)
-      @values.respond_to?(method) ? @values.send(method, *args, &block) : super
+      @args.respond_to?(method) ? @args.send(method, *args, &block) : super
     end
   end
 end

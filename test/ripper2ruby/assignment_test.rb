@@ -13,8 +13,8 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     src = 'a = b'
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
-    assert_equal 'a', assignment.left.value
-    assert_equal 'b', assignment.right.value
+    assert_equal 'a', assignment.left.token
+    assert_equal 'b', assignment.right.token
     assert_equal src, assignment.to_ruby
   end
   
@@ -23,9 +23,9 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
     assert_equal Ruby::MultiAssignment, assignment.left.class
-    assert_equal 'a', assignment.left[0].value
-    assert_equal 'b', assignment.left[1].value
-    assert_equal 'c', assignment.right.value
+    assert_equal 'a', assignment.left[0].token
+    assert_equal 'b', assignment.left[1].token
+    assert_equal 'c', assignment.right.token
     assert_equal src, assignment.to_ruby
   end
   
@@ -34,10 +34,10 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
     assert_equal Ruby::MultiAssignment, assignment.left.class
-    assert_equal 'a', assignment.left[0].value
-    assert_equal 'b', assignment.left[1].value
-    assert_equal 'c', assignment.right[0].value
-    assert_equal 'd', assignment.right[1].value
+    assert_equal 'a', assignment.left[0].token
+    assert_equal 'b', assignment.left[1].token
+    assert_equal 'c', assignment.right[0].token
+    assert_equal 'd', assignment.right[1].token
     assert_equal src, assignment.to_ruby
   end
   
@@ -46,10 +46,10 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
     assert_equal Ruby::MultiAssignment, assignment.left.class
-    assert_equal 'a', assignment.left[0].value
-    assert_equal 'b', assignment.left[1].value
+    assert_equal 'a', assignment.left[0].token
+    assert_equal 'b', assignment.left[1].token
     assert assignment.right.star?
-    assert_equal 'c', assignment.right[0].value
+    assert_equal 'c', assignment.right[0].token
     assert_equal src, assignment.to_ruby
   end
 end

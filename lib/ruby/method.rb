@@ -1,14 +1,18 @@
 require 'ruby/node'
 
 module Ruby
-  class Method < Node
-    attr_accessor :identifier, :params, :body
+  class Method < Identifier
+    attr_accessor :params, :body
 
     def initialize(identifier, params, body)
-      @identifier, @params, @body = identifier, params, body
-      @identifier.parent = self
+      super(identifier.token, identifier.position)
+      @params, @body = params, body
       @params.parent = self
       @body.parent = self
+    end
+    
+    def children
+      [params, body]
     end
   end
 end

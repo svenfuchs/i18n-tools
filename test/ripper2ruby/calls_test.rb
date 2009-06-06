@@ -15,10 +15,10 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     program = build(src)
     identifier = program.statements.first
     
-    assert_equal 't', identifier.value
+    assert_equal 't', identifier.token
 
     assert_equal program, identifier.parent
-    assert_equal src, identifier.src
+    assert_equal src, identifier.root.src
     assert_equal src, identifier.to_ruby
   end
 
@@ -27,12 +27,12 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     program = build(src)
     call = program.statements.first
     
-    assert_equal 't', call.identifier.value
+    assert_equal 't', call.token
     assert call.arguments.empty?
     assert !call.arguments.parentheses?
     
     assert_equal program, call.parent
-    assert_equal src, call.src
+    assert_equal src, call.root.src
     assert_equal src, call.to_ruby
   end
 
@@ -41,12 +41,12 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     program = build(src)
     call = program.statements.first
     
-    assert_equal 't', call.identifier.value
+    assert_equal 't', call.token
     assert call.arguments.empty?
     assert call.arguments.parentheses?
     
     assert_equal program, call.parent
-    assert_equal src, call.src
+    assert_equal src, call.root.src
     assert_equal src, call.to_ruby
   end
 
@@ -56,14 +56,14 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     call = program.statements.first
     arg = call.arguments.first
   
-    assert_equal 't', call.identifier.value
-    assert_equal 'I18n', call.target.value
+    assert_equal 't', call.token
+    assert_equal 'I18n', call.target.token
     assert call.arguments.parentheses?
   
     assert_equal 'foo', arg.first.value
 
     assert_equal program, call.parent
-    assert_equal src, call.src
+    assert_equal src, call.root.src
     assert_equal src, call.to_ruby
   end
   
@@ -73,14 +73,14 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     call = program.statements.first
     arg = call.arguments.first
 
-    assert_equal 't', call.identifier.value
-    assert_equal 'I18n', call.target.value
+    assert_equal 't', call.token
+    assert_equal 'I18n', call.target.token
     assert !call.arguments.parentheses?
   
     assert_equal 'foo', arg.first.value
 
     assert_equal program, call.parent
-    assert_equal src, call.src
+    assert_equal src, call.root.src
     assert_equal src, call.to_ruby
   end
   
@@ -88,11 +88,11 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     program = build("t('foo'); t 'bar'")
     calls = program.statements
 
-    assert_equal 't', calls[0].identifier.value
+    assert_equal 't', calls[0].token
     assert calls[0].arguments.parentheses?
     assert !calls[0].target
   
-    assert_equal 't', calls[1].identifier.value
+    assert_equal 't', calls[1].token
     assert !calls[1].arguments.parentheses?
     assert !calls[1].target
   end
@@ -102,12 +102,12 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     program = build(src)
     call = program.statements.first
   
-    assert_equal 't', call.identifier.value
+    assert_equal 't', call.token
     assert !call.target
     assert call.arguments.parentheses?
 
     assert_equal program, call.parent
-    assert_equal src, call.src
+    assert_equal src, call.root.src
     assert_equal src, call.to_ruby
   end
   
@@ -116,12 +116,12 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     program = build(src)
     call = program.statements.first
 
-    assert_equal 't', call.identifier.value
+    assert_equal 't', call.token
     assert !call.target
     assert_equal Ruby::Block, call.block.class
 
     assert_equal program, call.parent
-    assert_equal src, call.src
+    assert_equal src, call.root.src
     assert_equal src, call.to_ruby
   end
   
@@ -130,12 +130,12 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     program = build(src)
     call = program.statements.first
   
-    assert_equal 't', call.identifier.value
+    assert_equal 't', call.token
     assert !call.target
     assert_equal Ruby::Block, call.block.class
   
     assert_equal program, call.parent
-    assert_equal src, call.src
+    assert_equal src, call.root.src
     assert_equal src, call.to_ruby
   end
   

@@ -181,7 +181,7 @@ class Ripper
     end
     
     def on_symbol(identifier)
-      identifier.to_symbol
+      Ruby::Symbol.new(identifier.token, identifier.position)
     end
     
     def on_dyna_symbol(arg)
@@ -249,8 +249,38 @@ class Ripper
     def on_params(*args)
       cmd, params, other, rest_param = super
       # params ||= other # blocks populate params, methods populate other, not sure why this is
-      params << Ruby::RestParam.new(rest_param[1].value) if rest_param
+      params << Ruby::RestParam.new(rest_param[1].token) if rest_param
       Ruby::ParamsList.new(params)
     end
+    
+    # def on_words_beg(*args)
+    #   super.tap { |result| p result }
+    # end
+    # 
+    # def on_lbrace(*args)
+    #   super.tap { |result| p result }
+    # end
+    # 
+    # def on_op(*args)
+    #   super.tap { |result| p result }
+    # end
+    # 
+    # def on_symbeg(*args)
+    #   super.tap { |result| p result }
+    # end
+    # 
+    # def on_tstring_beg(*args)
+    #   super # [:@tstring_beg, "'", [1, 0]]
+    #         # [:@tstring_beg, "%(", [1, 0]]
+    # end
+    # 
+    # def on_qwords_beg(*args)
+    #   super # [:@qwords_beg, "%w(", [1, 0]]
+    # end
+    #   
+    # 
+    # def on_lbracket(*args)
+    #   super # [:@lbracket, "[", [1, 39]]
+    # end
   end
 end

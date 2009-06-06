@@ -18,11 +18,12 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
   
     assert_equal program, const.parent
     assert_equal Ruby::Const, const.class
-    assert_equal 'I18n', const.value
+    assert_equal 'I18n', const.token
     assert_equal 'I18n', const.to_ruby
   
-    assert_equal src, const.src
+    assert_equal src, const.root.src
   
+    assert_equal [1, 2], const.position
     assert_equal 1, const.row
     assert_equal 2, const.column
     assert_equal 4, const.length
@@ -38,8 +39,9 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal 1, int.value
     assert_equal '1', int.to_ruby
   
-    assert_equal src, int.src
+    assert_equal src, int.root.src
   
+    assert_equal [1, 2], int.position
     assert_equal 1, int.row
     assert_equal 2, int.column
     assert_equal 1, int.length
@@ -57,9 +59,10 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal program, string.parent
     assert_equal string, string.first.parent
   
-    assert_equal src, string.src
-    assert_equal src, string.first.src
+    assert_equal src, string.root.src
+    assert_equal src, string.first.root.src
   
+    assert_equal [1, 2], string.position
     assert_equal 1, string.row
     assert_equal 2, string.column
     assert_equal 5, string.length
@@ -74,6 +77,7 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal 'foo', string.value
     assert_equal "'foo'", string.to_ruby
   
+    assert_equal [1, 2], string.position
     assert_equal 1, string.row
     assert_equal 2, string.column
     assert_equal 5, string.length
@@ -89,6 +93,7 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal '""', string.to_ruby
   
     # WTF ripper doesn't seem to pass positions for empty strings and stuff. now what?
+    # assert_equal [1, 2], string.position
     # assert_equal 1, string.row
     # assert_equal 2, string.column
     # assert_equal 5, string.length
@@ -105,6 +110,7 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal program, symbol.parent
     assert_equal ":foo", symbol.to_ruby
   
+    assert_equal [1, 2], symbol.position
     assert_equal 1, symbol.row
     assert_equal 2, symbol.column
     assert_equal 4, symbol.length
@@ -119,10 +125,11 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal :foo, symbol.value
 
     assert_equal program, symbol.parent
-    assert_equal src, symbol.src
+    assert_equal src, symbol.root.src
 
     assert_equal ":'foo'", symbol.to_ruby
 
+    assert_equal [1, 2], symbol.position
     assert_equal 1, symbol.row
     assert_equal 2, symbol.column
     assert_equal 6, symbol.length
@@ -137,6 +144,7 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal :foo, symbol.value
     assert_equal ':"foo"', symbol.to_ruby
   
+    assert_equal [1, 2], symbol.position
     assert_equal 1, symbol.row
     assert_equal 2, symbol.column
     assert_equal 6, symbol.length
@@ -153,11 +161,12 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal program, array.parent
     assert_equal array, array.first.parent
   
-    assert_equal src, array.src
-    assert_equal src, array.first.src
+    assert_equal src, array.root.src
+    assert_equal src, array.first.root.src
   
     assert_equal '[:foo]', array.to_ruby
   
+    assert_equal [1, 2], array.position
     assert_equal 1, array.row
     assert_equal 2, array.column
     assert_equal 6, array.length
@@ -177,13 +186,14 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal hash.first, hash.first.key.parent
     assert_equal hash.first, hash.first.value.parent
   
-    assert_equal src, hash.src
-    assert_equal src, hash.first.src
-    assert_equal src, hash.first.key.src
-    assert_equal src, hash.first.value.src
+    assert_equal src, hash.root.src
+    assert_equal src, hash.first.root.src
+    assert_equal src, hash.first.key.root.src
+    assert_equal src, hash.first.value.root.src
   
     assert_equal '{ :foo => :bar }', hash.to_ruby
   
+    assert_equal [1, 2], hash.position
     assert_equal 1, hash.row
     assert_equal 2, hash.column
     assert_equal 16, hash.length
@@ -198,10 +208,11 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal nil, keyword.value
   
     assert_equal program, keyword.parent
-    assert_equal src, keyword.src
+    assert_equal src, keyword.root.src
   
     assert_equal 'nil', keyword.to_ruby
   
+    assert_equal [1, 2], keyword.position
     assert_equal 1, keyword.row
     assert_equal 2, keyword.column
     assert_equal 3, keyword.length
@@ -216,10 +227,11 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal true, keyword.value
   
     assert_equal program, keyword.parent
-    assert_equal src, keyword.src
+    assert_equal src, keyword.root.src
   
     assert_equal 'true', keyword.to_ruby
   
+    assert_equal [1, 2], keyword.position
     assert_equal 1, keyword.row
     assert_equal 2, keyword.column
     assert_equal 4, keyword.length
@@ -234,10 +246,11 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal false, keyword.value
   
     assert_equal program, keyword.parent
-    assert_equal src, keyword.src
+    assert_equal src, keyword.root.src
   
     assert_equal 'false', keyword.to_ruby
   
+    assert_equal [1, 2], keyword.position
     assert_equal 1, keyword.row
     assert_equal 2, keyword.column
     assert_equal 5, keyword.length
@@ -252,10 +265,11 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal '__FILE__', keyword.value
   
     assert_equal program, keyword.parent
-    assert_equal src, keyword.src
+    assert_equal src, keyword.root.src
   
     assert_equal '__FILE__', keyword.to_ruby
   
+    assert_equal [1, 2], keyword.position
     assert_equal 1, keyword.row
     assert_equal 2, keyword.column
     assert_equal 8, keyword.length
@@ -270,10 +284,11 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal '__LINE__', keyword.value
   
     assert_equal program, keyword.parent
-    assert_equal src, keyword.src
+    assert_equal src, keyword.root.src
   
     assert_equal '__LINE__', keyword.to_ruby
   
+    assert_equal [1, 2], keyword.position
     assert_equal 1, keyword.row
     assert_equal 2, keyword.column
     assert_equal 8, keyword.length
@@ -281,19 +296,20 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
   
   def test_class
     src = "class Foo < Bar\nfoo\nend"
-    program = build(src)
+    program = build(@@space + src)
     const = program.statements.first
   
     assert_equal program, const.parent
-    assert_equal const, const.const.parent
     assert_equal const, const.super_class.parent
     assert_equal const, const.body.parent
   
-    assert_equal 'Foo', const.const.value
-    assert_equal 'Bar', const.super_class.value
-    assert_equal 'foo', const.body.statements.first.value
+    assert_equal 'Foo', const.token
+    assert_equal 'Bar', const.super_class.token
+    assert_equal 'foo', const.body.statements.first.token
   
     assert_equal src, const.to_ruby
+
+    assert_equal [1, 2], const.position
   end
   
   # def test_method

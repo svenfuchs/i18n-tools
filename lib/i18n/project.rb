@@ -9,8 +9,8 @@ module I18n
     attr_accessor :root_dir, :store_dir
     
     def initialize(options = {})
-      @root_dir  = options[:root_dir] || '.'
-      @store_dir = options[:store_dir] || root_dir + '/.i18n'
+      @root_dir  = File.expand_path(options[:root_dir] || '.')
+      @store_dir = File.expand_path(options[:store_dir] || root_dir + '/.i18n')
     end
     
     def store_dir

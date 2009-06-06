@@ -17,7 +17,7 @@ class RipperToRubyTranslateCallTest < Test::Unit::TestCase
     translate_call = call.to_translate_call
     
     assert_equal call.target, translate_call.target
-    assert_equal call.identifier, translate_call.identifier
+    assert_equal call.token, translate_call.token
     assert_equal call.to_ruby, translate_call.to_ruby
     assert_equal translate_call, translate_call.arguments.parent
   end

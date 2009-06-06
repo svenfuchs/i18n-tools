@@ -7,6 +7,10 @@ module Ruby
     def initialize(statements)
       @statements = statements.each { |s| s.parent = self } if statements
     end
+    
+    def children
+      statements
+    end
 
     def to_ruby
       statements.map { |s| s.to_ruby }.join("\n")
@@ -19,6 +23,10 @@ module Ruby
     def initialize(statements, params)
       @params = params.tap { |p| p.parent = self } if params
       super(statements)
+    end
+    
+    def children
+      params
     end
 
     def to_ruby
@@ -34,6 +42,10 @@ module Ruby
 
     def initialize(params = [])
       @params = params.each { |v| v.parent = self } if params
+    end
+    
+    def children
+      params
     end
 
     def parentheses?
@@ -55,7 +67,7 @@ module Ruby
     end
 
     def to_ruby
-      "*#{value}"
+      "*#{super}"
     end
   end
 end

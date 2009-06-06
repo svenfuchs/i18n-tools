@@ -12,7 +12,7 @@ require 'pp'
 # src = "class Foo; end"
 # p Ripper::SexpBuilder.new(src).parse
 #
-# pp Ripper::PARSER_EVENTS
+# pp Ripper::SCANNER_EVENTS
 # pp ruby = Ripper::RubyBuilder.new(code).parse
 #
 # src = "t do |a| foo end"
@@ -39,6 +39,8 @@ require 'pp'
 # p Ripper::RubyBuilder.new(src).parse.to_ruby
 #pp Ripper::RubyBuilder.new(src).parse
 
+src = ":'asdf'"
+Ripper::RubyBuilder.new(src).parse
 
 # MISSING STUFF
 

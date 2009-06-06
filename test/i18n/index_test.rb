@@ -11,7 +11,7 @@ class I18nIndexTest < Test::Unit::TestCase
     @filenames = %W( #{File.dirname(__FILE__)}/../fixtures/source_1.rb
                      #{File.dirname(__FILE__)}/../fixtures/source_2.rb )
 
-    @project = Project.new(:root_dir => File.dirname(__FILE__) + '/../fixtures')
+    @project = Project.new(:root_dir => File.expand_path(File.dirname(__FILE__) + '/../fixtures'))
     FileUtils.cp(@filenames[0], "#{@filenames[0]}.backup")
   end
   
@@ -25,7 +25,7 @@ class I18nIndexTest < Test::Unit::TestCase
   end
 
   def test_index_finds_files
-    expected = %w(fixtures/source_1.rb fixtures/source_2.rb).map { |p| File.expand_path(p) }
+    expected = @filenames.map { |p| File.expand_path(p) }
     assert_equal expected, Keys::Index.new(@project).files & expected
   end
   

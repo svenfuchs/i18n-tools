@@ -4,10 +4,13 @@ module Ruby
   class Symbol < Identifier
     attr_accessor :literal
     
-    def initialize(value, position)
-      value = value.to_sym
-      position[1] -= 1 if position
+    def initialize(token, position)
       super
+      @position[1] -= 1 if @position
+    end
+    
+    def value
+      token.to_sym
     end
 
     def literal?
@@ -20,13 +23,14 @@ module Ruby
   end
   
   class DynaSymbol < String
-    def initialize(value)
+    def initialize(string)
       super
+      @position[1] -= 1 if @position
     end
     
-    def position
-      super.tap { |position| position[1] -= 1 }
-    end
+    # def position
+    #   super.tap { |position| position[1] -= 1 }
+    # end
     
     def value
       super.to_sym

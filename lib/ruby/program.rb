@@ -8,12 +8,28 @@ module Ruby
       @src = src
       @filename = filename
       self.statements = statements
+      @position = [0, 0]
+    end
+    
+    def children
+      statements
     end
     
     def statements=(statements)
       @statements = find_statement(statements).each do |statement|
         statement.parent = self
       end
+    end
+  
+    def statement(&block)
+      @statements.each { |s| return s if yield(s) }
+    end
+    
+    def replace_src(row, column, length, src)
+      @src[line_pos(row) + column, length] = src
+       
+      offset_column = src.length - length
+      update_positions(row, column + length, offset_column)
     end
     
     def to_ruby

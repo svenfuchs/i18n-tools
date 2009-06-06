@@ -5,7 +5,14 @@ module Ruby
     attr_accessor :assocs, :bare
 
     def initialize(assocs)
-      @assocs = assocs.each { |a| a.parent = self } if assocs
+      if assocs
+        @assocs = assocs.each { |a| a.parent = self }
+        position_from(assocs.first, 2) # TODO check for whitespace
+      end
+    end
+    
+    def children
+      assocs
     end
     
     def [](key)
@@ -16,6 +23,8 @@ module Ruby
     def []=(key, value)
       each { |assoc| return assoc.value = value if assoc.key.value == key }
       self << Assoc.new(key, value)
+      position_from(assocs.first, 2)
+      self[key]
     end
     
     def delete(key)
@@ -53,6 +62,11 @@ module Ruby
     
     def initialize(key, value)
       self.key, self.value = key, value
+      position_from(key)
+    end
+    
+    def children
+      [key, value]
     end
 
     def value=(value)

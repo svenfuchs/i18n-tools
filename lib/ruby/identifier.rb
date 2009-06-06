@@ -2,28 +2,28 @@ require 'ruby/node'
 
 module Ruby
   class Identifier < Node 
-    attr_accessor :value
+    attr_accessor :token
 
-    def initialize(value, position = nil)
+    def initialize(token, position = nil)
       super(position)
-      self.value = value
+      self.token = token
     end
     
-    def value=(value)
-      value.parent = self if value.respond_to?(:parent=)
-      @value = value
+    def token=(token)
+      @token = token.tap { |t| t.parent = self if t.respond_to?(:parent=) }
     end
     
-    def position
-      @position || value.respond_to?(:position) && value.position || raise("position not set")
-    end
+    # def position
+    #   @position || value.respond_to?(:position) && value.position || raise("position not set")
+    # end
     
-    def to_symbol
-      Ruby::Symbol.new(value, position)
-    end
+    # def to_symbol
+    #   Ruby::Symbol.new(value, position)
+    # end
     
     def to_ruby
-      value.respond_to?(:to_ruby) ? value.to_ruby : value
+      # token.respond_to?(:to_ruby) ? token.to_ruby : token
+      token
     end
   end
 end

@@ -87,7 +87,7 @@ module I18n
       end
 
       def files
-        Dir[File.expand_path(project.root_dir) + pattern]
+        Dir[project.root_dir + pattern]
       end
 
       def pattern

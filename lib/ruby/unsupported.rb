@@ -2,17 +2,12 @@ require 'ruby/node'
 
 module Ruby
   class Unsupported < Node 
-    attr_accessor :value
+    attr_accessor :token
 
-    def initialize(value, position = nil)
+    def initialize(token, position = nil)
       super(position)
-      self.value = value
+      self.token = token
     end
-    
-    # def value=(value)
-    #   value.parent = self if value.respond_to?(:parent=)
-    #   @value = value
-    # end
     
     def to_ruby
       '(unsupported type)'

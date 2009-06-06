@@ -2,18 +2,13 @@ require 'ruby/node'
 
 module Ruby
   class Unary < Node
-    attr_accessor :operator, :value
+    attr_accessor :operator, :operand
 
-    def initialize(*args)
-      @operator, @value = args
-    end
-    
-    def column
-      super - operator.to_s.length - ([:not].include?(operator) ? 1 : 0)
-    end
-    
-    def position
-      value.position
+    def initialize(operator, operand)
+      @operator = operator
+      @operand = operand
+
+      position_from(operand, operator.to_s.length + ([:not].include?(operator) ? 1 : 0))
     end
     
     def length
@@ -23,19 +18,18 @@ module Ruby
     def to_ruby
       ruby = operator.to_s
       ruby << ' ' if [:not].include?(operator)
-      ruby << value.to_ruby
+      ruby << operand.to_ruby
     end
   end
   
   class Binary < Node
     attr_accessor :operator, :left, :right
 
-    def initialize(*args)
-      @operator, @left, @right = args
-    end
-    
-    def position
-      left.position
+    def initialize(operator, left, right)
+      @operator = operator
+      @left = left 
+      @right = right
+      @position = left.position
     end
     
     def length
@@ -50,12 +44,11 @@ module Ruby
   class IfOp < Node
     attr_accessor :condition, :left, :right
 
-    def initialize(*args)
-      @condition, @left, @right = args
-    end
-    
-    def position
-      condition.position
+    def initialize(condition, left, right)
+      @condition = condition
+      @left = left
+      @right = right
+      @position = condition.position
     end
     
     def length

@@ -1,7 +1,7 @@
 module Ruby
   class Integer < Identifier
-    def initialize(value, position = nil)
-      super(value.to_i, position)
+    def value
+      token.to_i
     end
     
     def to_ruby

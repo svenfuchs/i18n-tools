@@ -21,8 +21,8 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
   
-  def test_root_dir_defaults_to_dot
-    assert_equal '.', Project.new.root_dir
+  def test_root_dir_defaults_to_current_work_dir
+    assert_equal File.expand_path('.'), Project.new.root_dir
   end
   
   def test_can_set_root_dir

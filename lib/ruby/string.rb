@@ -2,14 +2,20 @@ require 'ruby/node'
 
 module Ruby
   class String < Node
-    attr_accessor :literal
+    attr_accessor :contents, :literal
 
     def initialize(contents = [])
       @contents = contents.each { |c| c.parent = self }
+      position_from(contents.first, quote_open.length) unless contents.empty?
+    end
+    
+    def children
+      contents
     end
 
     def <<(content)
       @contents << content.tap { |c| c.parent = self } if content.is_a?(Node)
+      position_from(contents.first, quote_open.length) unless contents.empty?
       self
     end
 
@@ -20,11 +26,6 @@ module Ruby
 
     def value
       map { |content| content.value }.join
-    end
-
-    def position
-      raise "empty string ... now what?" if empty?
-      [first.row, first.column - quote_open.length]
     end
 
     def to_ruby
@@ -52,7 +53,11 @@ module Ruby
 
   class StringContent < Identifier
     def quote
-      @quote ||= line[column - 1]
+      line[column - 1]
+    end
+    
+    def value
+      token
     end
   end
 end
