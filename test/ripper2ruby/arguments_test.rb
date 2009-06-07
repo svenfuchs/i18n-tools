@@ -31,20 +31,16 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
   define_method :"test method call: t(:foo) (symbol)" do
     symbol = arguments("t(:foo)").first
     assert_equal :foo, symbol.value
-    assert symbol.literal?
   end
   
   define_method :'test method call: t(:"foo") (double-quoted symbol)' do
     symbol = arguments('t(:"foo")').first
     assert_equal :foo, symbol.value
-    assert !symbol.literal?
   end
   
   define_method :"test method call: t(:'foo') (single-quoted symbol)" do
     symbol = arguments("t(:'foo')").first
-  
     assert_equal :foo, symbol.value
-    assert !symbol.literal?
   end
   
   define_method :"test method call: t 'foo' (string, no parantheses)" do

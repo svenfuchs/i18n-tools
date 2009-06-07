@@ -1,18 +1,27 @@
-require 'ruby/node'
+require 'ruby/assoc'
 
 module Ruby
   class Hash < Node
-    attr_accessor :assocs, :bare
+    attr_accessor :assocs, :ldelim, :rdelim, :separators
 
-    def initialize(assocs)
-      if assocs
-        @assocs = assocs.each { |a| a.parent = self }
-        position_from(assocs.first, 2) # TODO check for whitespace
-      end
+    def initialize(assocs, position, ldelim, rdelim, separators)
+      @assocs = assocs.each { |a| a.parent = self } 
+      @ldelim = ldelim if ldelim
+      @rdelim = rdelim if rdelim
+      @separators = separators
+
+      super(position)
     end
     
     def children
       assocs
+    end
+    
+    def length(include_whitespace = false)
+      (ldelim ? ldelim.length(include_whitespace) : 0) + 
+      assocs.inject(0) { |sum, a| sum + a.length(true) } + 
+      separators.inject(0) { |sum, s| sum + s.length(true) } + 
+      (rdelim ? rdelim.length(true) : 0)
     end
     
     def [](key)
@@ -30,10 +39,6 @@ module Ruby
     def delete(key)
       delete_if { |assoc| assoc.key.value == key }
     end
-
-    def bare?
-      !!@bare
-    end
     
     def position
       raise "empty hash ... now what?" if empty?
@@ -44,43 +49,15 @@ module Ruby
       eval(to_ruby(false)) rescue {}
     end
 
-    def to_ruby(bare = self.bare)
-      return nil if bare? && empty?
-      ruby = bare ? '' : '{ '
-      ruby << map { |assoc| assoc.to_ruby }.join(', ')
-      ruby << ' }' unless bare
+    def to_ruby
+      ruby = (ldelim ? ldelim.to_ruby : '')
+      ruby << zip(separators).flatten.compact.map { |el| el.to_ruby }.join
+      ruby << (rdelim ? rdelim.to_ruby : '')
       ruby
     end
     
     def method_missing(method, *args, &block)
       @assocs.respond_to?(method) ? @assocs.send(method, *args, &block) : super
-    end
-  end
-
-  class Assoc < Node
-    attr_reader :key, :value
-    
-    def initialize(key, value)
-      self.key, self.value = key, value
-      position_from(key)
-    end
-    
-    def children
-      [key, value]
-    end
-
-    def value=(value)
-      value = Unsupported.new(value) if value && !value.is_a?(Node)
-      @value = value.tap { |v| v.parent = self }
-    end
-
-    def key=(key)
-      key = Unsupported.new(key) unless key.is_a?(Node)
-      @key = key.tap { |k| k.parent = self }
-    end
-    
-    def to_ruby
-      "#{key.to_ruby} => #{value.to_ruby}"
     end
   end
 end

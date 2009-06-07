@@ -1,8 +1,31 @@
-$: << File.expand_path(File.dirname(__FILE__) + '/../../lib')
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
-require 'ripper/ruby_builder'
-require 'test/unit'
-require 'pp'
+module TestRubyBuilderHelper
+  def sexp(src)
+    Ripper::SexpBuilder.new(src).parse
+  end
+
+  def build(src)
+    Ripper::RubyBuilder.build(src)
+  end
+
+  def node(src, klass)
+    build(src).statement { |n| n.is_a?(klass) } or nil
+  end
+  
+  def array(src)
+    node(src, Ruby::Array)
+  end
+  
+  def hash(src)
+    node(src, Ruby::Hash)
+  end
+  
+  def call(src)
+    node(src, Ruby::Call)
+  end
+end
+
 
 # p Ripper::SexpBuilder.new('1').parse
 
@@ -39,8 +62,8 @@ require 'pp'
 # p Ripper::RubyBuilder.new(src).parse.to_ruby
 #pp Ripper::RubyBuilder.new(src).parse
 
-src = ":'asdf'"
-Ripper::RubyBuilder.new(src).parse
+# src = "[:foo]"
+# Ripper::RubyBuilder.new(src).parse
 
 # MISSING STUFF
 

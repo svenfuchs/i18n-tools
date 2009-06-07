@@ -1,4 +1,4 @@
-require 'ruby/node'
+require 'ruby/args_list'
 
 module Ruby
   class Call < Identifier
@@ -35,44 +35,6 @@ module Ruby
       ruby << super + arguments.to_ruby
       ruby << block.to_ruby if block
       ruby
-    end
-  end
-
-  class ArgsList < Node
-    attr_accessor :parentheses, :args
-    
-    def initialize(args = [], parentheses = false)
-      @parentheses = parentheses
-      @args = args.each { |a| a.parent = self }
-    end
-    
-    def children
-      args
-    end
-    
-    def position
-      @position ||= first.position.dup.tap { |p| p[1] -= 1 }
-    end
-    
-    def <<(arg)
-      arg = Unsupported.new(arg) if arg && !arg.is_a?(Node)
-      @args << arg.tap { |v| v.parent = self }
-      self
-    end
-
-    def parentheses?
-      !!@parentheses
-    end
-    
-    def to_ruby
-      ruby = map { |arg| arg.to_ruby }.compact.join(', ')
-      ruby = "(#{ruby})" if parentheses?
-      ruby = " #{ruby}" unless parentheses? or empty?
-      ruby
-    end
-    
-    def method_missing(method, *args, &block)
-      @args.respond_to?(method) ? @args.send(method, *args, &block) : super
     end
   end
 end

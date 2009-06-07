@@ -150,55 +150,6 @@ class RipperToRubyTypesTest < Test::Unit::TestCase
     assert_equal 6, symbol.length
   end
   
-  define_method :'test an array with a symbol: [:foo]' do
-    src = @@space + '[:foo]'
-    program = build(src)
-    array = program.statements.first
-  
-    assert_equal Ruby::Array, array.class
-    assert_equal :foo, array.first.value
-  
-    assert_equal program, array.parent
-    assert_equal array, array.first.parent
-  
-    assert_equal src, array.root.src
-    assert_equal src, array.first.root.src
-  
-    assert_equal '[:foo]', array.to_ruby
-  
-    assert_equal [1, 2], array.position
-    assert_equal 1, array.row
-    assert_equal 2, array.column
-    assert_equal 6, array.length
-  end
-  
-  define_method :'test a hash: { :foo => :bar }' do
-    src = @@space + '{ :foo => :bar }'
-    program = build(src)
-    hash = program.statements.first
-  
-    assert_equal Ruby::Hash, hash.class
-    assert_equal :foo, hash.first.key.value
-    assert_equal :bar, hash.first.value.value
-  
-    assert_equal program, hash.parent
-    assert_equal hash, hash.first.parent
-    assert_equal hash.first, hash.first.key.parent
-    assert_equal hash.first, hash.first.value.parent
-  
-    assert_equal src, hash.root.src
-    assert_equal src, hash.first.root.src
-    assert_equal src, hash.first.key.root.src
-    assert_equal src, hash.first.value.root.src
-  
-    assert_equal '{ :foo => :bar }', hash.to_ruby
-  
-    assert_equal [1, 2], hash.position
-    assert_equal 1, hash.row
-    assert_equal 2, hash.column
-    assert_equal 16, hash.length
-  end
-  
   define_method :"test keyword: nil" do
     src = @@space + 'nil'
     program = build(src)

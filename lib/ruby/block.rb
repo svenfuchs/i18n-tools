@@ -38,7 +38,7 @@ module Ruby
   end
 
   class ParamsList < Node # join with ArgsList?
-    attr_accessor :params, :parentheses
+    attr_accessor :params
 
     def initialize(params = [])
       @params = params.each { |v| v.parent = self } if params
@@ -46,10 +46,6 @@ module Ruby
     
     def children
       params
-    end
-
-    def parentheses?
-      !!@parentheses
     end
 
     def to_ruby

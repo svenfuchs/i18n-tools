@@ -23,7 +23,7 @@ module Ruby
   end
   
   class MultiAssignment < Node
-    attr_accessor :refs, :star, :parentheses
+    attr_accessor :refs, :star
 
     def initialize(position = :left, refs = [])
       @position = position
@@ -41,10 +41,6 @@ module Ruby
     
     def star?
       !!star
-    end
-    
-    def parentheses?
-      !!parentheses
     end
     
     def position

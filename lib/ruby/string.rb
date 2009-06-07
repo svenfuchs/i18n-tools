@@ -2,26 +2,40 @@ require 'ruby/node'
 
 module Ruby
   class String < Node
-    attr_accessor :contents, :literal
+    attr_accessor :contents, :ldelim, :rdelim
+    
+    def initialize(contents, ldelim = nil, rdelim = nil)
+      @ldelim = ldelim if ldelim
+      @rdelim = rdelim if rdelim
 
-    def initialize(contents = [])
-      @contents = contents.each { |c| c.parent = self }
-      position_from(contents.first, quote_open.length) unless contents.empty?
+      if contents
+        contents.each { |c| self << c } 
+        ldelim ||= contents.first.ldelim
+      end
+
+      super(ldelim.position)
     end
     
     def children
       contents
     end
-
-    def <<(content)
-      @contents << content.tap { |c| c.parent = self } if content.is_a?(Node)
-      position_from(contents.first, quote_open.length) unless contents.empty?
-      self
+    
+    def contents
+      @contents ||= []
     end
 
-    # no idea what this means tbh
-    def literal?
-      !!@literal
+    def <<(content)
+      contents << content.tap { |c| c.parent = self }
+    end
+    
+    def whitespace
+      ldelim.whitespace
+    end
+    
+    def length(include_whitespace = false)
+      (ldelim ? ldelim.length(include_whitespace) : 0) +
+      contents.inject(0) { |sum, c| sum + c.length} + 
+      (rdelim ? rdelim.length(include_whitespace) : 0)
     end
 
     def value
@@ -29,29 +43,15 @@ module Ruby
     end
 
     def to_ruby
-      quote_open + map { |content| content.to_ruby }.join + quote_close
+      ldelim.to_ruby + map { |content| content.to_ruby }.join + rdelim.to_ruby
     end
     
     def method_missing(method, *args, &block)
       @contents.respond_to?(method) ? @contents.send(method, *args, &block) : super
     end
-
-    protected
-
-      def quote_open
-        first ? first.quote.tap { |char| char.replace("%#{char}") unless ['"', "'"].include?(char) } : '"'
-      rescue
-        '"'
-      end
-
-      def quote_close
-        first ? first.quote : '"'
-      rescue
-        '"'
-      end
   end
 
-  class StringContent < Identifier
+  class StringContent < Token
     def quote
       line[column - 1]
     end

@@ -2,20 +2,12 @@ module Ruby
   class Node
     include Ansi
 
-    attr_reader :parent, :filename, :children
+    attr_accessor :parent, :children, :position, :whitespace
 
-    def initialize(position = nil, filename = nil)
+    def initialize(position = nil, whitespace = '')
       @position = position
-      @filename = filename
+      @whitespace = whitespace if whitespace
       @children = []
-    end
-    
-    def parent=(parent)
-      @parent = parent
-    end
-    
-    def position
-      @position or raise("position not set in #{self.inspect}")
     end
     
     def row
@@ -25,9 +17,13 @@ module Ruby
     def column
       position[1]
     end
+    
+    def position
+      @position or raise "uninitialized position in #{self.class}"
+    end
 
-    def length
-      to_ruby.length
+    def length(*args)
+      raise "implement #{self.class}#length"
     end
     
     def root?
@@ -38,16 +34,16 @@ module Ruby
       root? ? self : parent.root
     end
 
-    def src_pos
-      line_pos(row) + column
-    end
-    
-    def src
-      root? ? @src : line[column, length]
+    def filename
+      root? ? @filename : root.filename
     end
 
-    def filename
-      @filename || parent && parent.filename
+    def src_pos(include_whitespace = false)
+      line_pos(row) + column - (include_whitespace ? whitespace.length : 0)
+    end
+    
+    def src(include_whitespace = false)
+      root? ? @src : root.src[src_pos(include_whitespace), length(include_whitespace)]
     end
 
     def lines

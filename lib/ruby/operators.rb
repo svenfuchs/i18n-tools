@@ -11,7 +11,7 @@ module Ruby
       position_from(operand, operator.to_s.length + ([:not].include?(operator) ? 1 : 0))
     end
     
-    def length
+    def length(include_whitespace = false)
       to_ruby.length
     end
     
@@ -32,7 +32,7 @@ module Ruby
       @position = left.position
     end
     
-    def length
+    def length(include_whitespace = false)
       to_ruby.length
     end
     
@@ -51,7 +51,7 @@ module Ruby
       @position = condition.position
     end
     
-    def length
+    def length(include_whitespace = false)
       to_ruby.length
     end
     

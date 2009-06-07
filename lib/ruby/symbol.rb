@@ -1,43 +1,34 @@
 require 'ruby/identifier'
 
 module Ruby
-  class Symbol < Identifier
-    attr_accessor :literal
+  class Symbol < Token
+    attr_accessor :ldelim
     
-    def initialize(token, position)
-      super
-      @position[1] -= 1 if @position
+    def initialize(token, ldelim)
+      @ldelim = ldelim
+      super(token)
     end
     
     def value
       token.to_sym
     end
-
-    def literal?
-      !!@literal
+    
+    def position
+      ldelim.position
+    end
+    
+    def length(include_whitespace = false)
+      ldelim.length(include_whitespace) + token.length
     end
     
     def to_ruby
-      ":#{super}"
+      (ldelim ? ldelim.to_ruby : '') + super(true)
     end
   end
   
   class DynaSymbol < String
-    def initialize(string)
-      super
-      @position[1] -= 1 if @position
-    end
-    
-    # def position
-    #   super.tap { |position| position[1] -= 1 }
-    # end
-    
     def value
       super.to_sym
-    end
-    
-    def to_ruby
-      ":#{super}"
     end
   end
 end

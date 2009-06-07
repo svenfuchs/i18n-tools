@@ -12,17 +12,17 @@ module I18n
             end
           eoc
         end
-        
+      
         def translate_calls
           @translate_calls ||= []
         end
-        
+      
         def collect_translate_call(call)
           call.tap { |c| translate_calls << c } if is_translate_call?(call)
         end
-        
+      
         KEY_CLASSES = [Ruby::Symbol, Ruby::DynaSymbol, Ruby::String, Ruby::Array]
-        
+      
         def is_translate_call?(call)
           call.token == 't' &&
           (!call.target.respond_to?(:token) or call.target.token == 'I18n') && 

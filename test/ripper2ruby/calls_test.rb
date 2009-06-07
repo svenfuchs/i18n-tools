@@ -29,7 +29,6 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     
     assert_equal 't', call.token
     assert call.arguments.empty?
-    assert !call.arguments.parentheses?
     
     assert_equal program, call.parent
     assert_equal src, call.root.src
@@ -43,7 +42,6 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     
     assert_equal 't', call.token
     assert call.arguments.empty?
-    assert call.arguments.parentheses?
     
     assert_equal program, call.parent
     assert_equal src, call.root.src
@@ -58,8 +56,6 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
   
     assert_equal 't', call.token
     assert_equal 'I18n', call.target.token
-    assert call.arguments.parentheses?
-  
     assert_equal 'foo', arg.first.value
 
     assert_equal program, call.parent
@@ -75,8 +71,6 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
 
     assert_equal 't', call.token
     assert_equal 'I18n', call.target.token
-    assert !call.arguments.parentheses?
-  
     assert_equal 'foo', arg.first.value
 
     assert_equal program, call.parent
@@ -89,11 +83,9 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     calls = program.statements
 
     assert_equal 't', calls[0].token
-    assert calls[0].arguments.parentheses?
     assert !calls[0].target
   
     assert_equal 't', calls[1].token
-    assert !calls[1].arguments.parentheses?
     assert !calls[1].target
   end
   
@@ -104,7 +96,6 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
   
     assert_equal 't', call.token
     assert !call.target
-    assert call.arguments.parentheses?
 
     assert_equal program, call.parent
     assert_equal src, call.root.src
