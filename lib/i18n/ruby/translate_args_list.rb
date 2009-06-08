@@ -2,7 +2,8 @@ require 'ruby/call'
 require 'i18n/ruby/call'
 
 module Ruby
-  class TranslateArgsList < ArgsList
+  # class TranslateArgsList < ArgsList
+  module TranslateArgsList
     def full_key
       normalize_keys(key, scope)
     end
@@ -16,7 +17,7 @@ module Ruby
     end
     
     def options
-      last.is_a?(Ruby::Hash) ? last.to_hash : {}
+      last.is_a?(Ruby::Hash) ? last.value : {}
     end
     
     def key_matches?(keys)
@@ -39,7 +40,7 @@ module Ruby
         self << Ruby::Hash.new unless self.last.is_a?(Ruby::Hash)
         last[:scope] = from_ruby("{ :scope => #{scope.inspect} }").assocs.first.value
       end
-      first.token = eval(":#{key.map { |k| k.to_s }.join('.')}")
+      first.token = key.map { |k| k.to_s }.join('.')
 
       root.replace_src(row, column, original_length, to_ruby)
     end

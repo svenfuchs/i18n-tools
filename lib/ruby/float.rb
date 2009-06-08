@@ -4,8 +4,8 @@ module Ruby
       token.to_f
     end
     
-    def to_ruby
-      super.to_s
+    def to_ruby(include_whitespace = false)
+      super(include_whitespace).to_s
     end
   end
 end

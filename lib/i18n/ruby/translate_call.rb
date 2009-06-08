@@ -3,7 +3,8 @@ require 'i18n/ruby/call'
 require 'i18n/ruby/translate_args_list'
 
 module Ruby
-  class TranslateCall < Call
+  # class TranslateCall < Call
+  module TranslateCall
     def full_key
       arguments.full_key
     end

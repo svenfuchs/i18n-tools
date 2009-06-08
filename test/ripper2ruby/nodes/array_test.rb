@@ -7,7 +7,7 @@ class RipperToRubyArrayTest < Test::Unit::TestCase
     src = '[:foo]'
     program = build(src)
     array = program.statements.first
-  
+
     assert_equal Ruby::Array, array.class
     assert_equal :foo, array.first.value
   
@@ -39,7 +39,7 @@ class RipperToRubyArrayTest < Test::Unit::TestCase
     assert_equal 10, array("[\n :foo \n]").length(true)
     assert_equal 10, array("  [\n :foo \n]").length
     assert_equal 12, array("  [\n :foo \n]").length(true)
-
+  
     assert_equal 20,  array("[:foo,  :bar,  :baz]").length
     assert_equal 20,  array("[:foo , :bar , :baz]").length
     assert_equal 20,  array("[:foo  ,:bar  ,:baz]").length

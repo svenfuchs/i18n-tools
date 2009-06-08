@@ -13,7 +13,8 @@ class Ripper
     
     WHITESPACE = [:@sp, :@nl, :@ignored_nl]
     
-    include String, Symbol, Hash, Array, Args, Operator, Scanner
+    include Block, Params, Call, String, Symbol, Hash, Array, Args, 
+            Assignment, Operator, Scanner
     
     class Token
       attr_accessor :type, :value, :whitespace, :row, :column
@@ -55,9 +56,13 @@ class Ripper
       
       alias :_pop :pop
       def pop(*types)
+        options = types.last.is_a?(::Hash) ? types.pop : {}
+        max = options[:max]
+        value = options[:value]
         tokens, ignored = [], []
-        while !empty?
-          if types.include?(last.type)
+
+        while !empty? && !(max && tokens.length >= max)
+          if types.include?(last.type) && (value.nil? || last.value == value)
             tokens << super()
           elsif ignore?(last.type)
             ignored << super()
@@ -65,6 +70,7 @@ class Ripper
             break
           end
         end
+
         ignored.reverse.each { |token| push(token) }
         tokens
       end
@@ -110,11 +116,11 @@ class Ripper
     end
 
     def on_stmts_add(target, statement)
-      target << statement
+      target << statement.tap { |s| s.parent = target }
     end
 
     def on_stmts_new
-      []
+      Ruby::Composite.collection
     end
 
     def on_void_stmt
@@ -125,32 +131,28 @@ class Ripper
       Ruby::Identifier.new(token, position, pop_whitespace)
     end
 
-    def on_kw(*args)
-      value, position = *super[1..2]
-      Ruby::Keyword.new(value, position.tap { |p| p[0] -= 1 })    # Ruby::Node expects zero-based rows
+    def on_kw(token)
+      if %w(do end).include?(token)
+        return push(super) 
+      else
+        Ruby::Keyword.new(token, position, pop_whitespace)
+      end
     end
 
-    def on_int(*args)
-      value, position = *super[1..2]
-      Ruby::Integer.new(value, position.tap { |p| p[0] -= 1 })    # Ruby::Node expects zero-based rows
+    def on_int(token)
+      Ruby::Integer.new(token, position, pop_whitespace)
     end
 
-    def on_float(*args)
-      value, position = *super[1..2]
-      Ruby::Float.new(value, position.tap { |p| p[0] -= 1 })      # Ruby::Node expects zero-based rows
+    def on_float(token)
+      Ruby::Float.new(token, position, pop_whitespace)
     end
 
-    def on_const(*args)
-      value, position = *super[1..2]
-      Ruby::Const.new(value, position.tap { |p| p[0] -= 1 })      # Ruby::Node expects zero-based rows
+    def on_const(token)
+      Ruby::Const.new(token, position, pop_whitespace)
     end
 
     def on_class(const, super_class, body)
       Ruby::Class.new(const, super_class, body)
-    end
-
-    def on_body_stmt(statements, *something)
-      Ruby::Body.new(statements.compact)
     end
 
     def on_def(identifier, params, body)
@@ -159,42 +161,6 @@ class Ripper
 
     def on_const_ref(const)
       const # not sure what to do here
-    end
-
-    def on_assign(left, right)
-      Ruby::Assignment.new(left, right)
-    end
-
-    def on_massign(left, right)
-      Ruby::Assignment.new(left, right)
-    end
-
-    def on_mlhs_new
-      Ruby::MultiAssignment.new(:left)
-    end
-
-    def on_mlhs_add(assignment, obj)
-      assignment.tap { |a| a << obj }
-    end
-
-    def on_mlhs_paren(arg)
-      arg #.tap { |a| a.parentheses = true if a.respond_to?(:parentheses) }
-    end
-
-    def on_mrhs_new
-      Ruby::MultiAssignment.new(:right)
-    end
-
-    def on_mrhs_new_from_args(args)
-      Ruby::MultiAssignment.new(:right, args.values)
-    end
-
-    def on_mrhs_add(assignment, ref)
-      assignment << ref
-    end
-
-    def on_mrhs_add_star(assignment, ref)
-      assignment.tap { |a| a.star = true } << ref
     end
 
     def on_field(field)
@@ -209,47 +175,8 @@ class Ripper
       field # not sure what to do here
     end
 
-    def on_method_add_arg(call, args)
-      call.tap { |call| call.arguments = args }
-    end
-
-    def on_method_add_block(call, block)
-      call.tap { |call| call.block = block }
-    end
-
-    def on_command(identifier, args)
-      Ruby::Call.new(nil, identifier, args)
-    end
-
-    def on_command_call(target, sep, identifier, args)
-      Ruby::Call.new(target, identifier, args)
-    end
-
-    def on_call(target, sep, identifier)
-      Ruby::Call.new(target, identifier)
-    end
-
-    def on_fcall(identifier)
-      Ruby::Call.new(nil, identifier)
-    end
-
-    def on_do_block(params, statements)
-      Ruby::Block.new(statements, params)
-    end
-
-    def on_block_var(params, something)
-      params
-    end
-
     def on_paren(params)
-      params #.tap { |p| p.parentheses = true }
-    end
-
-    def on_params(*args)
-      cmd, params, other, rest_param = super
-      # params ||= other # blocks populate params, methods populate other, not sure why this is
-      params << Ruby::RestParam.new(rest_param[1].token) if rest_param
-      Ruby::ParamsList.new(params)
+      params
     end
     
     protected
@@ -265,13 +192,14 @@ class Ripper
         stack.pop(*types)
       end
       
-      def pop_delim(type)
-        pop_delims(type).first
+      def pop_delim(type, options = {})
+        pop_delims(type, options).first
       end
     
       def pop_delims(*types)
+        options = types.last.is_a?(::Hash) ? types.pop : {}
         stack_ignore(*WHITESPACE) do 
-          types.map { |type| pop(type).map { |token| build_token(token) } }.flatten.compact
+          types.map { |type| pop(type, options).map { |token| build_token(token) } }.flatten.compact
         end
       end
       

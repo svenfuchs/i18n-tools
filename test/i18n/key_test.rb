@@ -13,8 +13,8 @@ class I18nKeyTest < Test::Unit::TestCase
   
   def init(src)
     @program = Ripper::RubyBuilder.new(src).parse
-    @args = @program.statement { |s| s.token == 't' }.arguments.to_translate_args_list
-    @foo = @program.statement { |s| s.token == 'foo' }
+    @args = @program.statement { |s| s.identifier.token == 't' }.arguments.to_translate_args_list
+    @foo = @program.statement { |s| s.identifier.token == 'foo' }
   end
   
   # define_method :"test: replace_key :foo with :fuh in (:baz, :scope => [:foo, :bar])" do

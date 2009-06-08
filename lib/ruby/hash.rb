@@ -2,26 +2,19 @@ require 'ruby/assoc'
 
 module Ruby
   class Hash < Node
-    attr_accessor :assocs, :ldelim, :rdelim, :separators
+    child_accessor :assocs, :ldelim, :rdelim, :separators
 
-    def initialize(assocs, position, ldelim, rdelim, separators)
-      @assocs = assocs.each { |a| a.parent = self } 
-      @ldelim = ldelim if ldelim
-      @rdelim = rdelim if rdelim
-      @separators = separators
+    def initialize(assocs, position, whitespace, ldelim, rdelim, separators)
+      self.ldelim = ldelim
+      self.rdelim = rdelim
+      self.assocs = Ruby::Composite.collection(assocs)
+      self.separators = Ruby::Composite.collection(separators)
 
-      super(position)
-    end
-    
-    def children
-      assocs
+      super(position, whitespace)
     end
     
     def length(include_whitespace = false)
-      (ldelim ? ldelim.length(include_whitespace) : 0) + 
-      assocs.inject(0) { |sum, a| sum + a.length(true) } + 
-      separators.inject(0) { |sum, s| sum + s.length(true) } + 
-      (rdelim ? rdelim.length(true) : 0)
+      to_ruby(include_whitespace).length
     end
     
     def [](key)
@@ -45,15 +38,15 @@ module Ruby
       @position ||= [first.key.row, first.key.column - 2]
     end
     
-    def to_hash
-      eval(to_ruby(false)) rescue {}
+    def value
+      code = to_ruby(false)
+      code = "{#{code}}" unless code =~ /^\s*{/
+      eval(code) rescue {}
     end
 
-    def to_ruby
-      ruby = (ldelim ? ldelim.to_ruby : '')
-      ruby << zip(separators).flatten.compact.map { |el| el.to_ruby }.join
-      ruby << (rdelim ? rdelim.to_ruby : '')
-      ruby
+    def to_ruby(include_whitespace = false)
+      nodes = ([ldelim] + zip(separators) + [rdelim]).flatten.compact
+      nodes[0].to_ruby(include_whitespace) + nodes[1..-1].map { |node| node.to_ruby(true) }.join
     end
     
     def method_missing(method, *args, &block)

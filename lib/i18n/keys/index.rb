@@ -140,6 +140,7 @@ module I18n
 
         def parse(file)
           source = File.read(file)
+          # puts source
           parser.new(source, file).tap { |parser| parser.parse }
         end
 

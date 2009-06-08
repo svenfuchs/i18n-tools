@@ -2,60 +2,37 @@ require 'ruby/node'
 
 module Ruby
   class String < Node
-    attr_accessor :contents, :ldelim, :rdelim
+    child_accessor :contents
+    attr_accessor :ldelim, :rdelim
     
-    def initialize(contents, ldelim = nil, rdelim = nil)
-      @ldelim = ldelim if ldelim
-      @rdelim = rdelim if rdelim
-
-      if contents
-        contents.each { |c| self << c } 
-        ldelim ||= contents.first.ldelim
-      end
-
-      super(ldelim.position)
+    def initialize(position, whitespace, ldelim, rdelim = nil)
+      self.ldelim = ldelim
+      self.rdelim = rdelim
+      self.contents = Composite.collection
+      super(position, whitespace)
     end
     
-    def children
-      contents
-    end
-    
-    def contents
-      @contents ||= []
-    end
-
-    def <<(content)
-      contents << content.tap { |c| c.parent = self }
-    end
-    
-    def whitespace
-      ldelim.whitespace
-    end
-    
-    def length(include_whitespace = false)
-      (ldelim ? ldelim.length(include_whitespace) : 0) +
-      contents.inject(0) { |sum, c| sum + c.length} + 
-      (rdelim ? rdelim.length(include_whitespace) : 0)
-    end
-
     def value
       map { |content| content.value }.join
     end
+    
+    def length(include_whitespace = false)
+      contents.inject(0) { |sum, c| sum + c.length} + 
+      (ldelim ? ldelim.length : 0) +
+      (rdelim ? rdelim.length : 0) + 
+      (include_whitespace ? whitespace.length : 0)
+    end
 
-    def to_ruby
-      ldelim.to_ruby + map { |content| content.to_ruby }.join + rdelim.to_ruby
+    def to_ruby(include_whitespace = false)
+      (include_whitespace ? whitespace : '') + ldelim + map { |content| content.to_ruby }.join + rdelim
     end
     
     def method_missing(method, *args, &block)
-      @contents.respond_to?(method) ? @contents.send(method, *args, &block) : super
+      contents.respond_to?(method) ? contents.send(method, *args, &block) : super
     end
   end
 
   class StringContent < Token
-    def quote
-      line[column - 1]
-    end
-    
     def value
       token
     end

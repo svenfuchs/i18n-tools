@@ -4,25 +4,21 @@ module Ruby
   class Symbol < Token
     attr_accessor :ldelim
     
-    def initialize(token, ldelim)
+    def initialize(token, position, whitespace, ldelim)
+      super(token, position, whitespace)
       @ldelim = ldelim
-      super(token)
     end
     
     def value
       token.to_sym
     end
     
-    def position
-      ldelim.position
-    end
-    
     def length(include_whitespace = false)
-      ldelim.length(include_whitespace) + token.length
+      ldelim.length + token.length + (include_whitespace ? whitespace.length : 0)
     end
     
-    def to_ruby
-      (ldelim ? ldelim.to_ruby : '') + super(true)
+    def to_ruby(include_whitespace = false)
+      (include_whitespace ? whitespace : '') + ldelim + token
     end
   end
   

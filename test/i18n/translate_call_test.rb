@@ -4,6 +4,24 @@ require 'i18n/ripper/ruby_builder'
 require 'i18n/ruby/translate_call'
 
 class RipperToRubyTranslateCallTest < Test::Unit::TestCase
+  include TestRubyBuilderHelper
+
+  define_method :"test: to_translate_call includes TranslateCall to the meta class" do
+    call = call('t(:foo)')
+    assert !call.respond_to?(:key)
+    
+    call = call.to_translate_call
+    assert call.respond_to?(:key)
+  end
+  
+  define_method :"test: to_translate_call includes TranslateArgsList to the arguments' meta class" do
+    call = call('t(:foo)')
+    assert !call.arguments.respond_to?(:key)
+    
+    call = call.to_translate_call
+    assert call.arguments.respond_to?(:key)
+  end
+  
   def test_collect_translate_calls
     src = "I18n.t(:foo); t('bar.baz', :scope => [:buz])"
     builder = I18n::Ripper::RubyBuilder.new(src)
@@ -17,7 +35,7 @@ class RipperToRubyTranslateCallTest < Test::Unit::TestCase
     translate_call = call.to_translate_call
     
     assert_equal call.target, translate_call.target
-    assert_equal call.token, translate_call.token
+    assert_equal call.identifier.token, translate_call.identifier.token
     assert_equal call.to_ruby, translate_call.to_ruby
     assert_equal translate_call, translate_call.arguments.parent
   end

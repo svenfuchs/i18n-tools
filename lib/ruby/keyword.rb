@@ -17,7 +17,7 @@ module Ruby
       '__LINE__' => '__LINE__'
     }
     
-    def initialize(token, position = nil)
+    def initialize(token, position, whitespace)
       super
       raise("unsupported keyword: #{token}") unless @@keywords.has_key?(token)
     end
@@ -26,9 +26,8 @@ module Ruby
       @@keywords[token]
     end
     
-    def to_ruby
-      token
-      # @@keywords.invert[token]
+    def to_ruby(include_whitespace = false)
+      super(include_whitespace).to_s
     end
   end
 end

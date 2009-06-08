@@ -1,18 +1,33 @@
-require File.dirname(__FILE__) + '/test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
-class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
-  def build(code)
-    Ripper::RubyBuilder.build(code)
+class RipperRubyBuilderArgsTest < Test::Unit::TestCase
+  include TestRubyBuilderHelper
+
+  define_method :"test call on no target, 3 arguments and parantheses" do
+    src = "t('a' , 'b', :c => :c)"
+    call = call(src)
+    args = call.arguments
+  
+    assert args.root.is_a?(Ruby::Program)
+  
+    assert_equal '(', args.ldelim
+    assert_equal ')', args.rdelim
+    assert_equal '',  args.whitespace
+    
+    assert_equal 2,   args.separators.length
+    assert_equal ',', args.separators[0].token
+    assert_equal ' ', args.separators[0].whitespace
+    assert_equal ',', args.separators[1].token
+    assert_equal '',  args.separators[1].whitespace
+    
+    assert_equal [0, 1], args.position
+    assert_equal 21, args.length
+    assert_equal src, call.to_ruby
   end
-
-  def arguments(code)
-    Ripper::RubyBuilder.new(code).parse.statements.first.arguments
-  end
-
+  
   define_method :'test method call: t("foo") (double-quoted string)' do
     src = 't("foo")'
-    program = build(src)
-    call = program.statements.first
+    call = call(src)
     args = call.arguments
     string = args.first
 
@@ -21,6 +36,7 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assert_equal call, args.parent
     assert_equal args, string.parent
     assert_equal src, string.root.src
+    assert_equal src, call.to_ruby
   end
   
   define_method :"test method call: t('foo') (single-quoted string)" do
@@ -44,14 +60,16 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
   end
   
   define_method :"test method call: t 'foo' (string, no parantheses)" do
-    program = build("t 'foo'")
-    args = program.statements.first.arguments
+    src = "t 'foo'"
+    call = call(src)
+    args = call.arguments
     string = args.first
-
+  
     assert_equal 'foo', string.value
-
+  
     assert_equal Ruby::Call, args.parent.class
     assert_equal args, string.parent
+    assert_equal src, call.to_ruby
   end
   
   define_method :"test method call: t('foo', 'bar') (two strings)" do
@@ -59,13 +77,12 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assert_equal 'foo', args[0].value
     assert_equal 'bar', args[1].value
   end
-
+  
   define_method :"test method call: t(:foo => :bar, :baz => :buz) (bare hash)" do
     src = "t(:foo => :bar, :baz => :buz)"
     call = build(src).statements.first
     hash = call.arguments.first
-
-    assert hash.bare?
+  
     assert_equal :foo, hash.assocs[0].key.value
     assert_equal :bar, hash.assocs[0].value.value
     assert_equal :baz, hash.assocs[1].key.value
@@ -73,21 +90,20 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     
     assert_equal src, call.to_ruby
   end
-
+  
   define_method :"test method call: t({ :foo => :bar, :baz => :buz }) (hash)" do
     src = "t({ :foo => :bar, :baz => :buz })"
     call = build(src).statements.first
     hash = call.arguments.first
-
-    assert !hash.bare?
+  
     assert_equal :foo, hash.assocs[0].key.value
     assert_equal :bar, hash.assocs[0].value.value
     assert_equal :baz, hash.assocs[1].key.value
     assert_equal :buz, hash.assocs[1].value.value
-
+  
     assert_equal src, call.to_ruby
   end
-
+  
   define_method :"test method call: t([:foo, :bar]) (array)" do
     src = "t([:foo, :bar, :baz])"
     call = build(src).statements.first
@@ -96,7 +112,7 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assert_equal :foo, array[0].value
     assert_equal :bar, array[1].value
     assert_equal :baz, array[2].value
-
+  
     assert_equal src, call.to_ruby
   end
   

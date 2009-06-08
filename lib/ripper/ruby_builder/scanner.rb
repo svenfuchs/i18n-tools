@@ -4,15 +4,15 @@ class Ripper
       def on_sp(*args)
         push(super)
       end
-    
+
       def on_nl(*args)
         push(super)
       end
-    
+
       def on_ignored_nl(*args)
         push(super)
       end
-    
+      
       def on_symbeg(*args)
         push(super)
       end
@@ -20,8 +20,16 @@ class Ripper
       def on_tstring_beg(*args)
         push(super)
       end
-    
+
       def on_tstring_end(*args)
+        push(super)
+      end
+
+      def on_lparen(*args)
+        push(super)
+      end
+
+      def on_rparen(*args)
         push(super)
       end
 
@@ -32,23 +40,24 @@ class Ripper
       def on_rbracket(*args)
         push(super)
       end
-      
+
       def on_lbrace(*args)
         push(super)
       end
-      
+
       def on_rbrace(*args)
         push(super)
       end
-      
+
       def on_op(*args)
         push(super)
       end
-      
+
       def on_comma(*args)
         push(super)
       end
-    
+
+
       # def on_tstring_content(*args)
       #   super.tap { |result| p result }
       # end
@@ -60,14 +69,6 @@ class Ripper
       # def on_qwords_beg(*args)
       #   super.tap { |result| p result }
       # end
-      #
-      # def on_lparen(*args)
-      #   super.tap { |result| p result }
-      # end
-      #
-      # def on_rparen(*args)
-      #   super.tap { |result| p result }
-      # end 
     end
   end
-end 
+end

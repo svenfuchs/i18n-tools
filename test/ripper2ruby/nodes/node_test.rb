@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
 class RipperRubyBuilderNodeTest < Test::Unit::TestCase
   def statements(src)
@@ -19,11 +19,11 @@ class RipperRubyBuilderNodeTest < Test::Unit::TestCase
   def test_update_position
     program = Ripper::RubyBuilder.build("a\nb\nc(:c); d(:d); e(:e)\nf")
     
-    b = program.statement { |s| s.token == 'b' }
-    c = program.statement { |s| s.token == 'c' }
-    d = program.statement { |s| s.token == 'd' }
-    e = program.statement { |s| s.token == 'e' }
-    f = program.statement { |s| s.token == 'f' }
+    b = program.statements[1]
+    c = program.statements[2]
+    d = program.statements[3]
+    e = program.statements[4]
+    f = program.statements[5]
     
     assert_equal [1, 0],  b.position
     assert_equal [2, 0],  c.position
@@ -43,8 +43,8 @@ class RipperRubyBuilderNodeTest < Test::Unit::TestCase
   def test_update_children_positions
     program = Ripper::RubyBuilder.build("a(:a); b(:b, ['b', 1], { :b => :'b' })")
     
-    a = program.statement { |s| s.token == 'a' }
-    b = program.statement { |s| s.token == 'b' }
+    a = program.statement { |s| s.identifier.token == 'a' }
+    b = program.statement { |s| s.identifier.token == 'b' }
     
     assert_equal [0, 0],  a.position
     assert_equal [0, 7],  b.position

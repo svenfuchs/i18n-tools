@@ -1,69 +1,33 @@
-require 'ruby/identifier'
+require 'ruby/params'
 
 module Ruby
   class Body < Node
-    attr_reader :statements
+    child_accessor :statements
     
     def initialize(statements)
-      @statements = statements.each { |s| s.parent = self } if statements
+      self.statements = Composite.collection(statements)
     end
     
-    def children
-      statements
-    end
-
-    def to_ruby
-      statements.map { |s| s.to_ruby }.join("\n")
+    def to_ruby(include_whitespace = false)
+      statements.first.to_ruby(include_whitespace) +
+      statements[1..-1].map { |s| s.to_ruby(true) }.join
     end
   end
   
   class Block < Body
-    attr_reader :params
+    child_accessor :params
+    attr_accessor :rdelim, :ldelim
     
     def initialize(statements, params)
-      @params = params.tap { |p| p.parent = self } if params
+      self.params = params
       super(statements)
     end
     
-    def children
-      params
-    end
-
-    def to_ruby
-      ruby = [' do' + (params ? " |#{params.to_ruby}|" : '') ]
-      ruby << super
-      ruby << 'end'
-      ruby.join("\n")
-    end
-  end
-
-  class ParamsList < Node # join with ArgsList?
-    attr_accessor :params
-
-    def initialize(params = [])
-      @params = params.each { |v| v.parent = self } if params
-    end
-    
-    def children
-      params
-    end
-
-    def to_ruby
-      map { |p| p.to_ruby }.join(', ')
-    end
-
-    def method_missing(method, *args, &block)
-      @params.respond_to?(method) ? @params.send(method, *args, &block) : super
-    end
-  end
-
-  class RestParam < Identifier
-    def column
-      super - 1
-    end
-
-    def to_ruby
-      "*#{super}"
+    def to_ruby(include_whitespace = false)
+      ldelim.to_ruby(include_whitespace) + 
+      (params ? params.to_ruby(true) : '') +
+      super(true) +
+      rdelim.to_ruby(true)
     end
   end
 end

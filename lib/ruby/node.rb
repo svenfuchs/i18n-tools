@@ -1,15 +1,18 @@
+require 'core_ext/object/meta_class'
+require 'ruby/composite'
+
 module Ruby
   class Node
     include Ansi
+    include Composite
 
-    attr_accessor :parent, :children, :position, :whitespace
+    attr_accessor :position, :whitespace
 
     def initialize(position = nil, whitespace = '')
-      @position = position
+      @position = position.dup if position
       @whitespace = whitespace if whitespace
-      @children = []
     end
-    
+
     def row
       position[0]
     end
@@ -17,21 +20,13 @@ module Ruby
     def column
       position[1]
     end
-    
+
     def position
       @position or raise "uninitialized position in #{self.class}"
     end
 
     def length(*args)
       raise "implement #{self.class}#length"
-    end
-    
-    def root?
-      parent.nil?
-    end
-    
-    def root
-      root? ? self : parent.root
     end
 
     def filename
@@ -41,7 +36,7 @@ module Ruby
     def src_pos(include_whitespace = false)
       line_pos(row) + column - (include_whitespace ? whitespace.length : 0)
     end
-    
+
     def src(include_whitespace = false)
       root? ? @src : root.src[src_pos(include_whitespace), length(include_whitespace)]
     end
@@ -49,7 +44,7 @@ module Ruby
     def lines
       root.src.split("\n")
     end
-    
+
     def line_pos(row)
       (row > 0 ? lines[0..(row - 1)].inject(0) { |pos, line| pos + line.length + 1 } : 0)
     end
@@ -64,12 +59,12 @@ module Ruby
     def context(highlight = false)
       (context_head + [line(highlight)] + context_tail).join("\n")
     end
-    
+
     def context_head
       min = [0, row - Ruby.context_width].max
       min < row ? lines[min..(row - 1)] : []
     end
-    
+
     def context_tail
       max = [row + Ruby.context_width, lines.size].min
       max > row ? lines[(row + 1)..max] : []
@@ -84,17 +79,17 @@ module Ruby
     def line_tail
       line[(column + length - 1)..-1].to_s
     end
-    
-    protected
-    
+
+    # protected
+
       def position_from(node, column_offset = 0)
         @position = node.position.dup
         @position[1] -= column_offset
       end
-      
+
       def update_positions(row, column, offset_column)
         position[1] += offset_column if self.row == row && self.column > column
-        children.each { |c| c.update_positions(row, column, offset_column) }
+        children.each { |c| c.send(:update_positions, row, column, offset_column) }
       end
   end
 end

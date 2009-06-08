@@ -2,58 +2,49 @@ require 'ruby/node'
 
 module Ruby
   class Assignment < Node
-    attr_accessor :left, :right
+    child_accessor :left, :right, :operator
 
-    def initialize(left, right)
-      @left = left.tap { |c| c.parent = self }
-      @right = right.tap { |c| c.parent = self }
+    def initialize(left, right, operator)
+      self.left = left
+      self.right = right
+      self.operator = operator
     end
-    
-    def children
-      [left, right]
-    end
-    
+
     def position
       @position ||= [left.row, left.column - 1]
     end
-    
-    def to_ruby
-      left.to_ruby + " = " + right.to_ruby
+
+    def to_ruby(include_whitespace = false)
+      left.to_ruby(include_whitespace) +
+      operator.to_ruby(true) +
+      right.to_ruby(true)
     end
   end
-  
-  class MultiAssignment < Node
-    attr_accessor :refs, :star
 
-    def initialize(position = :left, refs = [])
-      @position = position
-      @refs = refs.each { |r| r.parent = self }
+  class MultiAssignment < Node
+    child_accessor :refs, :separators, :star
+    attr_accessor :kind, :ldelim, :rdelim
+
+    def initialize(kind, ldelim = nil, rdelim = nil, separators = [], star = nil, refs = [])
+      self.kind = kind
+      self.ldelim = ldelim
+      self.rdelim = rdelim
+      self.star = star
+      self.separators = Composite.collection(separators)
+      self.refs = Composite.collection(refs)
     end
-    
-    def children
-      refs
-    end
-    
-    def <<(ref)
-      refs << ref.tap { |v| v.parent = self }
-      self
-    end
-    
-    def star?
-      !!star
-    end
-    
+
     def position
       [first.row, first.column - 1]
     end
-    
-    def to_ruby
-      ruby = (star? ? '*' : '')
-      ruby << map { |e| e.to_ruby }.join(', ')
-      ruby = "(#{ruby})" if parentheses?
-      ruby
+
+    def to_ruby(include_whitespace = false)
+      (ldelim ? ldelim.to_ruby(include_whitespace) : '') +
+      (star ? star.to_ruby(true) : '') +
+      zip(separators).flatten.compact.map { |el| el.to_ruby(true) }.join +
+      (rdelim ? rdelim.to_ruby(include_whitespace) : '')
     end
-    
+
     def method_missing(method, *args, &block)
       @refs.respond_to?(method) ? @refs.send(method, *args, &block) : super
     end

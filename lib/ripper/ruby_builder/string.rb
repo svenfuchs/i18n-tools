@@ -2,7 +2,7 @@ class Ripper
   class RubyBuilder < Ripper::SexpBuilder
     module String
       def on_string_literal(string)
-        string.rdelim = pop_delim(:@tstring_end)
+        string.rdelim = pop_delim(:@tstring_end).token
         string
       end
 
@@ -11,7 +11,8 @@ class Ripper
       end
 
       def on_string_content
-        Ruby::String.new(nil, pop_delim(:@tstring_beg))
+        ldelim = pop_delim(:@tstring_beg)
+        Ruby::String.new(ldelim.position, ldelim.whitespace, ldelim.token)
       end
 
       def on_tstring_content(token)

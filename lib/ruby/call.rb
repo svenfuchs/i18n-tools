@@ -1,40 +1,31 @@
-require 'ruby/args_list'
+require 'ruby/args'
 
 module Ruby
-  class Call < Identifier
-    attr_accessor :target, :block
+  class Call < Node
+    child_accessor :identifier, :target, :arguments, :block
 
-    def initialize(target, identifier, arguments = nil)
+    def initialize(target, identifier, arguments = nil, block = nil)
       target = Unsupported.new(target) if target && !target.is_a?(Node)
 
-      super(identifier.token, identifier.position)
+      super(target ? target.position : identifier.position )
 
-      @target = target
-      self.arguments = arguments.tap { |a| a.parent = self } if arguments
+      self.target = target
+      self.identifier = identifier
+      self.arguments = arguments || ArgsList.new(position.dup)
+      self.block = block
     end
     
-    def children
-      [target, arguments, block].compact
+    def length(include_whitespace = false)
+      to_ruby(include_whitespace).length
     end
     
-    def arguments
-      @arguments ||= ArgsList.new.tap { |a| a.parent = self }
-    end
-    
-    def arguments=(arguments)
-      @arguments = arguments.tap { |a| a.parent = self }
-    end
-    
-    def block=(block)
-      @block = block.tap { |b| b.parent = self }
-    end
-    
-    def to_ruby
-      ruby = ''
-      ruby << target.to_ruby + '.' if target
-      ruby << super + arguments.to_ruby
-      ruby << block.to_ruby if block
-      ruby
+    def to_ruby(include_whitespace = false)
+      ruby = if target
+        target.to_ruby(include_whitespace) + '.' + identifier.to_ruby(true) # TODO extract the dot
+      else
+        identifier.to_ruby(include_whitespace)
+      end
+      ruby + arguments.to_ruby(true) + (block ? block.to_ruby(true) : '')
     end
   end
 end

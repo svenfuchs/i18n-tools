@@ -6,11 +6,12 @@ class Ripper
       end
 
       def on_symbol(identifier)
-        Ruby::Symbol.new(identifier.token, pop_delim(:@symbeg))
+        ldelim = pop_delim(:@symbeg)
+        Ruby::Symbol.new(identifier.token, ldelim.position, ldelim.whitespace, ldelim.token)
       end
 
       def on_dyna_symbol(symbol)
-        symbol.rdelim = pop_delim(:@tstring_end)
+        symbol.rdelim = pop_delim(:@tstring_end).token
         symbol
       end
 
@@ -19,7 +20,8 @@ class Ripper
       end
 
       def on_xstring_new
-        Ruby::DynaSymbol.new(nil, pop_delim(:@symbeg))
+        ldelim = pop_delim(:@symbeg)
+        Ruby::DynaSymbol.new(ldelim.position, ldelim.whitespace, ldelim.token)
       end
     end
   end

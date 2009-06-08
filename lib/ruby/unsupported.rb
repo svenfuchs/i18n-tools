@@ -5,11 +5,11 @@ module Ruby
     attr_accessor :token
 
     def initialize(token, position = nil)
-      super(position)
       self.token = token
+      super(position)
     end
     
-    def to_ruby
+    def to_ruby(include_whitespace = false)
       '(unsupported type)'
     end
   end

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
 class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
   def build(src)
@@ -23,6 +23,7 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
     assert_equal Ruby::MultiAssignment, assignment.left.class
+    assert_equal :left, assignment.left.kind
     assert_equal 'a', assignment.left[0].token
     assert_equal 'b', assignment.left[1].token
     assert_equal 'c', assignment.right.token
@@ -33,9 +34,14 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     src = 'a, b = c, d'
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
+
     assert_equal Ruby::MultiAssignment, assignment.left.class
+    assert_equal :left, assignment.left.kind
     assert_equal 'a', assignment.left[0].token
     assert_equal 'b', assignment.left[1].token
+
+    assert_equal Ruby::MultiAssignment, assignment.right.class
+    assert_equal :right, assignment.right.kind
     assert_equal 'c', assignment.right[0].token
     assert_equal 'd', assignment.right[1].token
     assert_equal src, assignment.to_ruby
@@ -45,10 +51,15 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     src = 'a, b = *c'
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
+
     assert_equal Ruby::MultiAssignment, assignment.left.class
+    assert_equal :left, assignment.left.kind
     assert_equal 'a', assignment.left[0].token
     assert_equal 'b', assignment.left[1].token
-    assert assignment.right.star?
+
+    assert_equal Ruby::MultiAssignment, assignment.right.class
+    assert_equal :right, assignment.right.kind
+    assert_equal '*', assignment.right.star.token
     assert_equal 'c', assignment.right[0].token
     assert_equal src, assignment.to_ruby
   end

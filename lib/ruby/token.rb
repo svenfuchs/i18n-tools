@@ -5,8 +5,8 @@ module Ruby
     attr_accessor :token
 
     def initialize(token, position = nil, whitespace = '')
-      super(position, whitespace)
       self.token = token
+      super(position, whitespace)
     end
     
     def length(include_whitespace = false)

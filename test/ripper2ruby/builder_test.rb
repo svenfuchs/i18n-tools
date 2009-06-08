@@ -46,17 +46,4 @@ class RipperToRubyBuilderTest < Test::Unit::TestCase
       end
     end
   end
-
-  # def test_builder
-  #   builder = Ripper::RubyBuilder.new('')
-  #   builder.push [:@lbracket, "[", [1, 0]]
-  #   builder.push [:@rbracket, "]", [1, 5]]
-  #   
-  #   array = builder.build_array([Ruby::Symbol.new(:foo, [0, 2])])
-  # 
-  #   assert_equal '[', array.ldelim.value
-  #   assert_equal ']', array.rdelim.value
-  #   assert_equal 0,   array.position[0]
-  #   assert_equal 6,   array.length
-  # end
 end

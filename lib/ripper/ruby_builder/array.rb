@@ -5,8 +5,8 @@ class Ripper
         separators = pop_delims(:@rbracket, :@comma, :@lbracket).reverse
         ldelim = separators.shift
         rdelim = separators.pop
-        
-        Ruby::Array.new(elements, ldelim.position.dup, pop_whitespace, ldelim, rdelim, separators)
+
+        Ruby::Array.new(elements.to_a, ldelim.position, '', ldelim, rdelim, separators)
       end
     end
   end

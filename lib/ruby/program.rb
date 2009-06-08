@@ -2,25 +2,16 @@ require 'ruby/node'
 
 module Ruby
   class Program < Node
-    attr_accessor :statements
+    attr_accessor :src, :filename
+    child_accessor :statements
 
-    def initialize(src, filename = nil, statements = [])
-      @src = src
-      @filename = filename
-      self.statements = statements
-      @position = [0, 0]
+    def initialize(src, filename, statements)
+      self.src = src
+      self.filename = filename
+      self.statements = Composite.collection(filter_statements(statements).each { |s| s.parent = self })
+      super([0, 0])
     end
     
-    def children
-      statements
-    end
-    
-    def statements=(statements)
-      @statements = find_statement(statements).each do |statement|
-        statement.parent = self
-      end
-    end
-  
     def statement(&block)
       @statements.each { |s| return s if yield(s) }
     end
@@ -36,8 +27,8 @@ module Ruby
       statements.map { |s| s.to_ruby }.join("\n")
     end
     
-    # need to get rid of unsupported sexp nodes
-    def find_statement(statements)
+    # get rid of unsupported sexp nodes
+    def filter_statements(statements)
       Array(statements).flatten.select { |s| s.kind_of?(Ruby::Node) }
     end
   end
