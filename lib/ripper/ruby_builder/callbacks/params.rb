@@ -15,6 +15,10 @@ class Ripper
         star = pop_delim(:@op, :value => '*')
         Ruby::RestParam.new(identifier.token, identifier.position, star)
       end
+
+      def on_paren(params)
+        params
+      end
     end
   end
 end

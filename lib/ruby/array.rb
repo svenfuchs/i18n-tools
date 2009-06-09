@@ -4,11 +4,11 @@ module Ruby
   class Array < Node
     child_accessor :elements, :ldelim, :rdelim, :separators
     
-    def initialize(elements, whitespace, ldelim, rdelim, separators)
+    def initialize(elements, whitespace, ldelim, rdelim = nil, separators = nil)
       self.ldelim = ldelim
       self.rdelim = rdelim
-      self.separators = separators
-      self.elements = elements
+      self.elements = elements || []
+      self.separators = separators || []
 
       super(ldelim.position, whitespace)
     end

@@ -49,6 +49,10 @@ class Ripper
         push(super)
       end
 
+      def on_qwords_beg(*args)
+        push(super)
+      end
+
       def on_op(*args)
         push(super)
       end
@@ -56,17 +60,12 @@ class Ripper
       def on_comma(*args)
         push(super)
       end
-
-
-      # def on_tstring_content(*args)
-      #   super.tap { |result| p result }
-      # end
+      
+      def on_words_sep(*args)
+        push(super)
+      end
 
       # def on_words_beg(*args)
-      #   super.tap { |result| p result }
-      # end
-      #
-      # def on_qwords_beg(*args)
       #   super.tap { |result| p result }
       # end
     end

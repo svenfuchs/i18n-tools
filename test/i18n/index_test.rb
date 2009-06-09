@@ -86,7 +86,7 @@ class I18nIndexTest < Test::Unit::TestCase
   end
   
   def test_index_inject_with_no_keys_given_iterates_over_all_calls
-    index = Keys::Index.new(@project, :pattern => '/**/*.{rb}')
+    index = Keys::Index.new(@project, :pattern => '/source_*.{rb}')
     expected = [:bar, :baaar, :baar, :'foo.bar', 'bar', 'bar_1', :bar_2]
     result = index.inject([]) { |result, call| result << call.key }
     assert_equal expected, result

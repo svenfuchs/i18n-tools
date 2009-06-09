@@ -22,7 +22,7 @@ module I18n
       @@default_pattern = '/**/*.{rb,erb}'
       @@default_parser = I18n::Ripper::RubyBuilder
 
-      attr_reader :project, :name, :parser
+      attr_accessor :project, :name, :parser, :pattern
 
       [:keys, :calls, :by_key].each do |name|
         class_eval <<-code
@@ -33,11 +33,13 @@ module I18n
         code
       end
 
-      def initialize(project, name = nil, options = {})
-        @project, @name = project, name || :default
+      def initialize(*args)
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        self.project = args.shift
+        self.name = args.shift || :default
         
-        @pattern = options[:pattern] || @@default_pattern
-        @parser = options[:parser] || @@default_parser
+        self.pattern = options[:pattern] || @@default_pattern
+        self.parser = options[:parser] || @@default_parser
 
         reset!
         @@formatter.setup(self) if @@formatter
