@@ -13,11 +13,7 @@ module Ruby
     end
     
     def scope
-      options[:scope]
-    end
-    
-    def options
-      last.is_a?(Ruby::Hash) ? last.value : {}
+      last.is_a?(Ruby::Hash) ? last.value[:scope] : nil
     end
     
     def key_matches?(keys)
@@ -26,30 +22,28 @@ module Ruby
     end
     
     def replace_key!(search, replacement)
+      key, scope = compute_key_replacement(search, replacement)
       original_length = length
-      key = normalize_keys(self.key)
-      scope = normalize_keys(nil, self.scope)
-      
-      scope = self.full_key
-      scope[0, search.length] = replacement
-      key = scope.slice!(-key.length, key.length) # i.e. we preserve the key length?
 
-      if scope.empty?
-        last.delete(:scope)
-      else
-        self << Ruby::Hash.new unless self.last.is_a?(Ruby::Hash)
-        last[:scope] = from_ruby("{ :scope => #{scope.inspect} }").assocs.first.value
-      end
       first.token = key.map { |k| k.to_s }.join('.')
+      update_options(:scope, scope) # TODO fix positions!
 
       root.replace_src(row, column, original_length, to_ruby)
     end
     
-    def from_ruby(src)
-      Ripper::RubyBuilder.new(src).parse.statements.first
-    end
-    
     protected
+    
+      def compute_key_replacement(search, replacement)
+        key = normalize_keys(self.key)
+        scope = normalize_keys(nil, self.scope)
+      
+        scope = self.full_key
+        scope[0, search.length] = replacement
+        key = scope.slice!(-key.length, key.length) # i.e. we preserve the key length?
+        scope = nil if scope.empty?
+      
+        [key, scope]
+      end
     
       def normalize_keys(key, scope = nil)
         I18n.send(:normalize_translation_keys, nil, key, scope)

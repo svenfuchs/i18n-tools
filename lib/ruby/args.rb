@@ -5,15 +5,11 @@ module Ruby
     child_accessor :args, :separators
     attr_accessor :ldelim, :rdelim
 
-    def initialize(position = nil) # , whitespace = '', ldelim = '', rdelim = '', separators = []
-      self.separators = Composite.collection(separators)
-      self.args = Composite.collection
+    def initialize(position = nil)
+      self.separators = []
+      self.args = []
 
       super(position, whitespace)
-    end
-
-    def separators
-      @separators ||= []
     end
 
     def length(include_whitespace = false)
@@ -21,6 +17,19 @@ module Ruby
       separators.inject(0) { |sum, s| sum + s.length(true) } +
       ldelim.length + rdelim.length +
       (include_whitespace ? whitespace.length : 0)
+    end
+    
+    def pop
+      [args.pop, separators.pop]
+    end
+    
+    def options
+      last.is_a?(Ruby::Hash) ? last : (self << Ruby::Hash.new) # TODO fix positions!
+    end
+    
+    def update_options(key, value)
+      value ? options[key] = from_ruby(' ' + value.inspect) : last.delete(key)
+      pop if last.empty?
     end
 
     def to_ruby(include_whitespace = false)
@@ -31,6 +40,10 @@ module Ruby
 
     def method_missing(method, *args, &block)
       self.args.respond_to?(method) ? self.args.send(method, *args, &block) : super
+    end
+    
+    def from_ruby(src)
+      Ripper::RubyBuilder.new(src).parse.statements.first
     end
   end
 

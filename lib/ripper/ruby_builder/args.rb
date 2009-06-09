@@ -12,7 +12,7 @@ class Ripper
           args.whitespace = ldelim.whitespace
           args.ldelim = ldelim #.token
           args.rdelim = rdelim #.token if rdelim # rdelim.whitespace + 
-          args.separators = Ruby::Composite.collection(separators)
+          args.separators = separators
         end
         
         args

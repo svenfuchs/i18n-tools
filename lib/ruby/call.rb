@@ -15,6 +15,10 @@ module Ruby
       self.block = block
     end
     
+    def token
+      identifier.token
+    end
+    
     def length(include_whitespace = false)
       to_ruby(include_whitespace).length
     end

@@ -80,7 +80,11 @@ module Ruby
       line[(column + length - 1)..-1].to_s
     end
 
-    # protected
+    protected
+    
+      def from_ruby(src)
+        Ripper::RubyBuilder.new(src).parse.statements.first
+      end
 
       def position_from(node, column_offset = 0)
         @position = node.position.dup

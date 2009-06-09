@@ -7,8 +7,8 @@ module Ruby
     def initialize(params, whitespace, ldelim, rdelim, separators)
       self.ldelim = ldelim
       self.rdelim = rdelim
-      self.separators = Ruby::Composite.collection(separators)
-      self.params = Composite.collection(params)
+      self.separators = separators
+      self.params = params
 
       position = ldelim ? ldelim.position : params.first.position rescue nil
       super(position, whitespace)

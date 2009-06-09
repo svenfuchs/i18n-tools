@@ -27,8 +27,8 @@ module Ruby
       self.ldelim = ldelim
       self.rdelim = rdelim
       self.star = star
-      self.separators = Composite.collection(separators)
-      self.refs = Composite.collection(refs)
+      self.separators = separators
+      self.refs = refs
     end
 
     def position

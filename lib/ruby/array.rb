@@ -7,8 +7,8 @@ module Ruby
     def initialize(elements, whitespace, ldelim, rdelim, separators)
       self.ldelim = ldelim
       self.rdelim = rdelim
-      self.separators = Composite.collection(separators)
-      self.elements = Composite.collection(elements)
+      self.separators = separators
+      self.elements = elements
 
       super(ldelim.position, whitespace)
     end
@@ -16,6 +16,10 @@ module Ruby
     def <<(element)
       elements << element
       self
+    end
+    
+    def whitespace=(whitespace)
+      ldelim.whitespace = whitespace
     end
     
     def length(include_whitespace = false)

@@ -116,11 +116,11 @@ class Ripper
     end
 
     def on_stmts_add(target, statement)
-      target << statement.tap { |s| s.parent = target }
+      target << statement #.tap { |s| s.parent = target }
     end
 
     def on_stmts_new
-      Ruby::Composite.collection
+      []
     end
 
     def on_void_stmt
@@ -153,7 +153,7 @@ class Ripper
 
     def on_class(const, super_class, body)
       Ruby::Class.new(const, super_class, body)
-    end
+      end
 
     def on_def(identifier, params, body)
       Ruby::Method.new(identifier, params, body)

@@ -13,108 +13,108 @@ class I18nKeyTest < Test::Unit::TestCase
   
   def init(src)
     @program = Ripper::RubyBuilder.new(src).parse
-    @args = @program.statement { |s| s.identifier.token == 't' }.arguments.to_translate_args_list
-    @foo = @program.statement { |s| s.identifier.token == 'foo' }
+    @args = @program.statement { |s| s.token == 't' }.arguments.to_translate_args_list
+    @foo = @program.statement { |s| s.token == 'foo' }
   end
   
-  # define_method :"test: replace_key :foo with :fuh in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo], [:fuh])
-  #   assert_equal "(:baz, :scope => [:fuh, :bar])", @args.to_ruby
-  #   assert_equal pre + "t(:baz, :scope => [:fuh, :bar])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo, :bar] with [:fuh, :bah] in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo, :bar], [:fuh, :bah])
-  #   assert_equal "(:baz, :scope => [:fuh, :bah])", @args.to_ruby
-  #   assert_equal pre + "t(:baz, :scope => [:fuh, :bah])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo, :bar] with [:fuh] in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo, :bar], [:fuh])
-  #   assert_equal "(:baz, :scope => [:fuh])", @args.to_ruby
-  #   assert_equal pre + "t(:baz, :scope => [:fuh])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo] with [:foo, :fuh] in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo], [:foo, :fuh])
-  #   assert_equal "(:baz, :scope => [:foo, :fuh, :bar])", @args.to_ruby
-  #   assert_equal pre + "t(:baz, :scope => [:foo, :fuh, :bar])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo, :bar, :baz] with [:foo] in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo, :bar, :baz], [:foo])
-  #   assert_equal "(:foo)", @args.to_ruby
-  #   assert_equal pre + "t(:foo)" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo, :bar, :baz] with [:foo, :bar] in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo, :bar, :baz], [:foo, :bar])
-  #   assert_equal "(:bar, :scope => [:foo])", @args.to_ruby
-  #   assert_equal pre + "t(:bar, :scope => [:foo])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo, :bar, :baz] with [:foo, :bar, :buz] in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo, :bar, :baz], [:foo, :bar, :buz])
-  #   assert_equal "(:buz, :scope => [:foo, :bar])", @args.to_ruby
-  #   assert_equal pre + "t(:buz, :scope => [:foo, :bar])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo, :bar, :baz] with [:foo, :bar, :baz, :buz] in (:baz, :scope => [:foo, :bar])" do
-  #   init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo, :bar, :baz], [:foo, :bar, :baz, :buz])
-  #   assert_equal "(:buz, :scope => [:foo, :bar, :baz])", @args.to_ruby
-  #   assert_equal pre + "t(:buz, :scope => [:foo, :bar, :baz])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
-  # 
-  # define_method :"test: replace_key [:foo, :bar] with [:foo, :bar, :baz] in (:bar, :scope => [:foo])" do
-  #   init(pre + "t(:baz, :scope => [:foo])" + post)
-  #   old_foo_src = @foo.src
-  # 
-  #   @args.replace_key!([:foo, :bar], [:foo, :bar, :baz])
-  #   assert_equal "(:baz, :scope => [:foo, :bar])", @args.to_ruby
-  #   assert_equal pre + "t(:baz, :scope => [:foo, :bar])" + post, @args.root.src
-  #   assert_equal old_foo_src, @foo.src
-  # end
+  define_method :"test: replace_key :foo with :fuh in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo], [:fuh])
+    assert_equal "(:baz, :scope => [:fuh, :bar])", @args.to_ruby
+    assert_equal pre + "t(:baz, :scope => [:fuh, :bar])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo, :bar] with [:fuh, :bah] in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo, :bar], [:fuh, :bah])
+    assert_equal "(:baz, :scope => [:fuh, :bah])", @args.to_ruby
+    assert_equal pre + "t(:baz, :scope => [:fuh, :bah])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo, :bar] with [:fuh] in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo, :bar], [:fuh])
+    assert_equal "(:baz, :scope => [:fuh])", @args.to_ruby
+    assert_equal pre + "t(:baz, :scope => [:fuh])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo] with [:foo, :fuh] in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo], [:foo, :fuh])
+    assert_equal "(:baz, :scope => [:foo, :fuh, :bar])", @args.to_ruby
+    assert_equal pre + "t(:baz, :scope => [:foo, :fuh, :bar])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo, :bar, :baz] with [:foo] in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo, :bar, :baz], [:foo])
+    assert_equal "(:foo)", @args.to_ruby
+    assert_equal pre + "t(:foo)" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo, :bar, :baz] with [:foo, :bar] in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo, :bar, :baz], [:foo, :bar])
+    assert_equal "(:bar, :scope => [:foo])", @args.to_ruby
+    assert_equal pre + "t(:bar, :scope => [:foo])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo, :bar, :baz] with [:foo, :bar, :buz] in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo, :bar, :baz], [:foo, :bar, :buz])
+    assert_equal "(:buz, :scope => [:foo, :bar])", @args.to_ruby
+    assert_equal pre + "t(:buz, :scope => [:foo, :bar])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo, :bar, :baz] with [:foo, :bar, :baz, :buz] in (:baz, :scope => [:foo, :bar])" do
+    init(pre + "t(:baz, :scope => [:'foo', :bar])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo, :bar, :baz], [:foo, :bar, :baz, :buz])
+    assert_equal "(:buz, :scope => [:foo, :bar, :baz])", @args.to_ruby
+    assert_equal pre + "t(:buz, :scope => [:foo, :bar, :baz])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
+  
+  define_method :"test: replace_key [:foo, :bar] with [:foo, :bar, :baz] in (:bar, :scope => [:foo])" do
+    init(pre + "t(:baz, :scope => [:foo])" + post)
+    old_foo_src = @foo.src
+  
+    @args.replace_key!([:foo, :bar], [:foo, :bar, :baz])
+    assert_equal "(:baz, :scope => [:foo, :bar])", @args.to_ruby
+    assert_equal pre + "t(:baz, :scope => [:foo, :bar])" + post, @args.root.src
+    assert_equal old_foo_src, @foo.src
+  end
   
   define_method :"test: replace a few keys on the same line and next line" do
     init("t(:a, :scope => [:a]); t(:b, :scope => [:b]);\n t(:c, :scope => [:ccc])\nt(:d, :scope => [:d])\ne(:e)")
-
+  
     tokens = %w(a b c d e)
     calls = tokens.map { |t| @program.statement { |s| s.arguments.first.token == t } }
     calls = ::Hash[*tokens.zip(calls).flatten]
     src   = ::Hash[*tokens.zip(calls.values.map { |c| c.src }).flatten]
-
+  
     calls['a'].to_translate_call.arguments.replace_key!([:a], [:aaa])
     calls['b'].to_translate_call.arguments.replace_key!([:b], [:bbb])
     calls['c'].to_translate_call.arguments.replace_key!([:ccc], [:cc])

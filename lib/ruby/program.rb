@@ -8,7 +8,7 @@ module Ruby
     def initialize(src, filename, statements)
       self.src = src
       self.filename = filename
-      self.statements = Composite.collection(filter_statements(statements).each { |s| s.parent = self })
+      self.statements = filter_statements(statements).each { |s| s.parent = self }
       super([0, 0])
     end
     

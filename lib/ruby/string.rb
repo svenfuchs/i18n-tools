@@ -7,7 +7,7 @@ module Ruby
     def initialize(ldelim, rdelim = nil)
       self.ldelim = ldelim
       self.rdelim = rdelim
-      self.contents = Composite.collection
+      self.contents = []
       super(ldelim.position)
     end
     

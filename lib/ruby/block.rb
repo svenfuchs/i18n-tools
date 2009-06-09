@@ -5,7 +5,7 @@ module Ruby
     child_accessor :statements
     
     def initialize(statements)
-      self.statements = Composite.collection(statements)
+      self.statements = statements
     end
     
     def to_ruby(include_whitespace = false)

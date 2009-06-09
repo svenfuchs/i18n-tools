@@ -7,8 +7,8 @@ module Ruby
     def initialize(assocs, whitespace, ldelim, rdelim, separators)
       self.ldelim = ldelim
       self.rdelim = rdelim
-      self.assocs = Ruby::Composite.collection(assocs)
-      self.separators = Ruby::Composite.collection(separators)
+      self.assocs = assocs
+      self.separators = separators
 
       super(ldelim ? ldelim.position : assocs.first.position, whitespace)
     end
@@ -23,7 +23,8 @@ module Ruby
     
     def []=(key, value)
       each { |assoc| return assoc.value = value if assoc.key.value == key }
-      self << Assoc.new(key, value)
+      self.separators << Token.new(',')
+      self.assocs << Assoc.new(key, value)
       self[key]
     end
     
@@ -39,6 +40,7 @@ module Ruby
 
     def to_ruby(include_whitespace = false)
       nodes = ([ldelim] + zip(separators) + [rdelim]).flatten.compact
+      return '' if nodes.empty?
       nodes[0].to_ruby(include_whitespace) + nodes[1..-1].map { |node| node.to_ruby(true) }.join
     end
     
