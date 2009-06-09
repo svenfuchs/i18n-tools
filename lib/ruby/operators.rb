@@ -9,13 +9,8 @@ module Ruby
       self.operand = operand
     end
     
-    def position
-      operator.position.dup
-    end
-    
-    def to_ruby(include_whitespace = false)
-      operator.to_ruby(include_whitespace) +
-      operand.to_ruby(true)
+    def nodes
+      [operator, operand]
     end
   end
   
@@ -28,14 +23,8 @@ module Ruby
       self.right = right
     end
     
-    def position
-      left.position.dup
-    end
-    
-    def to_ruby(include_whitespace = false)
-      left.to_ruby(include_whitespace) + 
-      operator.to_ruby(true) +
-      right.to_ruby(true)
+    def nodes
+      [left, operator, right]
     end
   end
   
@@ -49,13 +38,8 @@ module Ruby
       self.operators = operators
     end
     
-    def position
-      condition.position.dup
-    end
-    
-    def to_ruby(include_whitespace = false)
-      condition.to_ruby(include_whitespace) +
-      operators.zip([left, right]).flatten.map { |node| node.to_ruby(true) }.join
+    def nodes
+      [[condition, left, right].zip(operators)].flatten.compact
     end
   end
 end

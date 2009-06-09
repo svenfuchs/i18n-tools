@@ -23,8 +23,8 @@ module Ruby
       update_positions(row, column + length, offset_column)
     end
     
-    def to_ruby
-      statements.map { |s| s.to_ruby }.join("\n")
+    def nodes
+      statements
     end
     
     # get rid of unsupported sexp nodes

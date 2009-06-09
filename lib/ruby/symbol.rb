@@ -1,7 +1,7 @@
 require 'ruby/identifier'
 
 module Ruby
-  class Symbol < Token
+  class Symbol < Identifier
     child_accessor :ldelim
     
     def initialize(token, ldelim)
@@ -9,24 +9,20 @@ module Ruby
       super(token)
     end
     
-    def position
-      ldelim.position.dup
-    end
-    
-    def position=(position)
-      ldelim.position = position
-    end
-    
-    def whitespace
-      ldelim.whitespace
-    end
-    
     def value
       token.to_sym
     end
     
+    def whitespace # FIXME remove these ...
+      ldelim.whitespace
+    end
+    
     def to_ruby(include_whitespace = false)
       ldelim.to_ruby(include_whitespace) + token
+    end
+    
+    def nodes
+      [ldelim]
     end
   end
   

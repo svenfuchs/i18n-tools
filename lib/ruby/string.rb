@@ -10,25 +10,12 @@ module Ruby
       self.contents = []
     end
     
-    def position
-      ldelim.position.dup
-    end
-    
-    def whitespace
-      ldelim.whitespace
-    end
-    
     def value
       map { |content| content.value }.join
     end
     
     def src_pos(include_whitespace = false)
       ldelim.src_pos(include_whitespace)
-    end
-
-    def to_ruby(include_whitespace = false)
-      (include_whitespace ? whitespace : '') + 
-      nodes.map { |node| node.to_ruby(true) }.join.strip
     end
     
     def nodes

@@ -8,13 +8,8 @@ module Ruby
       self.statements = statements
     end
     
-    def position
-      statements.first.position.dup
-    end
-    
-    def to_ruby(include_whitespace = false)
-      statements.first.to_ruby(include_whitespace) +
-      statements[1..-1].map { |s| s.to_ruby(true) }.join
+    def nodes
+      statements
     end
   end
   
@@ -26,11 +21,8 @@ module Ruby
       super(statements)
     end
     
-    def to_ruby(include_whitespace = false)
-      ldelim.to_ruby(include_whitespace) + 
-      (params ? params.to_ruby(true) : '') +
-      super(true) +
-      rdelim.to_ruby(true)
+    def nodes
+      [ldelim, params, super, rdelim].flatten.compact
     end
   end
 end

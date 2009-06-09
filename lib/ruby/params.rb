@@ -11,19 +11,6 @@ module Ruby
       self.params = params
     end
 
-    def position
-      (ldelim ? ldelim.position : params.first.position).dup
-    end
-
-    def whitespace
-      ldelim ? ldelim.whitespace : params.first.whitespace
-    end
-
-    def to_ruby(include_whitespace = false)
-      (include_whitespace ? whitespace : '') +
-      nodes.map { |el| el.to_ruby(true) }.join.strip
-    end
-
     def nodes
       [ldelim, zip(separators), rdelim].flatten.compact
     end

@@ -16,7 +16,7 @@ module Ruby
     include Ansi
     include Composite
 
-    attr_accessor :position, :whitespace
+    attr_writer :whitespace
 
     def initialize(position = nil, whitespace = '')
       self.position = position.dup if position
@@ -31,16 +31,29 @@ module Ruby
       position[1]
     end
 
-    # def position
-    #   @position or raise "uninitialized position in #{self.class}"
-    # end
+    def position
+      @position || nodes.each { |n| return n.position.dup if n } && raise("position not set in #{self.class}")
+    end
     
     def position=(position)
       @position = position.dup
     end
+    
+    def whitespace
+      @whitespace || nodes.each { |n| return n.whitespace if n } && ''
+    end
 
     def length(include_whitespace = false)
       to_ruby(include_whitespace).length
+    end
+
+    def to_ruby(include_whitespace = false)
+      (include_whitespace ? whitespace : '').tap {|a| p a unless a.is_a?(::String)} + 
+      nodes.map { |node| node.to_ruby(true) }.join.strip
+    end
+    
+    def nodes
+      []
     end
 
     def filename

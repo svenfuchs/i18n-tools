@@ -11,10 +11,6 @@ module Ruby
       self.separators = separators || []
     end
     
-    def position
-      (ldelim ? ldelim.position : assocs.first.position).dup
-    end
-    
     def [](key)
       each { |assoc| return assoc.value if assoc.key.value == key } or nil
     end
@@ -35,11 +31,9 @@ module Ruby
       code = "{#{code}}" unless code =~ /^\s*{/
       eval(code) rescue {}
     end
-
-    def to_ruby(include_whitespace = false)
-      nodes = ([ldelim] + zip(separators) + [rdelim]).flatten.compact
-      return '' if nodes.empty?
-      nodes[0].to_ruby(include_whitespace) + nodes[1..-1].map { |node| node.to_ruby(true) }.join
+    
+    def nodes
+      [ldelim, zip(separators), rdelim].flatten.compact
     end
     
     def method_missing(method, *args, &block)

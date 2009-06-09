@@ -21,15 +21,20 @@ module Ruby
       (target ? target.position : identifier.position).dup
     end
     
+    # TODO extract the dot, then kill the method
     def to_ruby(include_whitespace = false)
       ruby = if target
-        target.to_ruby(include_whitespace) + '.' + identifier.to_ruby(true) # TODO extract the dot
+        target.to_ruby(include_whitespace) + '.' + identifier.to_ruby(true) 
       else
         identifier.to_ruby(include_whitespace)
       end
       ruby + 
       (arguments ? arguments.to_ruby(true) : '') + 
       (block ? block.to_ruby(true) : '')
+    end
+    
+    def nodes
+      [target, identifier, arguments, block].flatten.compact
     end
   end
 end

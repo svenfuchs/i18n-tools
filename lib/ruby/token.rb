@@ -10,7 +10,7 @@ module Ruby
     end
     
     def to_ruby(include_whitespace = false)
-      (include_whitespace ? whitespace : '') + token
+      (include_whitespace ? whitespace : '') + token.to_s
     end
   end
 end

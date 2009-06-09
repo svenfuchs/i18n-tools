@@ -10,11 +10,9 @@ module Ruby
       self.operator = operator
       super(left.position)
     end
-
-    def to_ruby(include_whitespace = false)
-      left.to_ruby(include_whitespace) +
-      operator.to_ruby(true) +
-      right.to_ruby(true)
+    
+    def nodes
+      [left, operator, right]
     end
   end
 
@@ -30,14 +28,9 @@ module Ruby
       self.separators = separators
       self.refs = refs
     end
-
-    def position
-      ldelim ? ldelim.position.dup : refs.first.position.dup
-    end
-
-    def to_ruby(include_whitespace = false)
-      nodes = [ldelim, star, zip(separators), rdelim].flatten.compact
-      nodes[0].to_ruby(include_whitespace) + nodes[1..-1].map { |node| node.to_ruby(true) }.join
+    
+    def nodes
+      [ldelim, star, zip(separators), rdelim].flatten.compact
     end
 
     def method_missing(method, *args, &block)
