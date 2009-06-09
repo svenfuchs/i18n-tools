@@ -2,23 +2,27 @@ require 'ruby/identifier'
 
 module Ruby
   class Symbol < Token
-    attr_accessor :ldelim
+    child_accessor :ldelim
     
-    def initialize(token, position, whitespace, ldelim)
-      super(token, position, whitespace)
-      @ldelim = ldelim
+    def initialize(token, ldelim)
+      self.ldelim = ldelim
+      super(token, ldelim.position)
     end
     
     def value
       token.to_sym
     end
     
+    def whitespace
+      ldelim.whitespace # TODO remove this?
+    end
+    
     def length(include_whitespace = false)
-      ldelim.length + token.length + (include_whitespace ? whitespace.length : 0)
+      ldelim.length(include_whitespace) + token.length
     end
     
     def to_ruby(include_whitespace = false)
-      (include_whitespace ? whitespace : '') + ldelim + token
+      ldelim.to_ruby(include_whitespace) + token
     end
   end
   

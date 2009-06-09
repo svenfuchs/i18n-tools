@@ -5,7 +5,7 @@ class Ripper
         separators = pop_delims(:@rbrace, :@comma, :@lbrace).reverse
         ldelim, rdelim = separators.shift, separators.pop
 
-        Ruby::Hash.new(assocs, ldelim.position, '', ldelim, rdelim, separators)
+        Ruby::Hash.new(assocs, '', ldelim, rdelim, separators)
       end
 
       def on_assoclist_from_args(args)
@@ -17,12 +17,12 @@ class Ripper
           pop_delims(:@comma, :max => assocs.length - 1).reverse
         end
         
-        Ruby::Hash.new(assocs, assocs.first.key.position, '', nil, nil, separators)
+        Ruby::Hash.new(assocs, '', nil, nil, separators)
       end
 
       def on_assoc_new(key, value)
         stack_ignore(:@rbrace, :@rparen, :@comma) do
-          assoc = Ruby::Assoc.new(key.position, key, value, pop_delim(:@op))
+          assoc = Ruby::Assoc.new(key, value, pop_delim(:@op))
         end
       end
     end

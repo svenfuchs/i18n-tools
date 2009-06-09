@@ -2,16 +2,15 @@ require 'ruby/node'
 
 module Ruby
   class Array < Node
-    child_accessor :elements, :separators
-    attr_accessor :ldelim, :rdelim
+    child_accessor :elements, :ldelim, :rdelim, :separators
     
-    def initialize(elements, position, whitespace, ldelim, rdelim, separators)
+    def initialize(elements, whitespace, ldelim, rdelim, separators)
       self.ldelim = ldelim
       self.rdelim = rdelim
       self.separators = Composite.collection(separators)
       self.elements = Composite.collection(elements)
 
-      super(position, whitespace)
+      super(ldelim.position, whitespace)
     end
     
     def <<(element)

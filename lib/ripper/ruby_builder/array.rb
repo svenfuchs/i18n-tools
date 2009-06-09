@@ -6,7 +6,7 @@ class Ripper
         ldelim = separators.shift
         rdelim = separators.pop
 
-        Ruby::Array.new(elements.to_a, ldelim.position, '', ldelim, rdelim, separators)
+        Ruby::Array.new(elements.to_a, '', ldelim, rdelim, separators)
       end
     end
   end

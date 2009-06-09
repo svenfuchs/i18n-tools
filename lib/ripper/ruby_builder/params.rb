@@ -7,9 +7,8 @@ class Ripper
         rdelim = pop_delim(:@op, :value => '|')
         separators = pop_delims(:@comma)
         ldelim = pop_delim(:@op, :value => '|')
-        position = ldelim ? ldelim.position.dup : nil
 
-        Ruby::ParamsList.new(params, position, '', ldelim, rdelim, separators)
+        Ruby::ParamsList.new(params, '', ldelim, rdelim, separators)
       end
       
       def on_rest_param(identifier)

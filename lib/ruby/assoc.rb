@@ -4,11 +4,11 @@ module Ruby
   class Assoc < Node
     child_accessor :key, :value, :operator
     
-    def initialize(position, key, value, operator)
+    def initialize(key, value, operator)
       self.key = key
       self.value = value
       self.operator = operator
-      super(position)
+      super(key.position)
     end
     
     def length(include_whitespace = false)

@@ -10,8 +10,8 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
   
     assert args.root.is_a?(Ruby::Program)
   
-    assert_equal '(', args.ldelim
-    assert_equal ')', args.rdelim
+    assert_equal '(', args.ldelim.token
+    assert_equal ')', args.rdelim.token
     assert_equal '',  args.whitespace
     
     assert_equal 2,   args.separators.length

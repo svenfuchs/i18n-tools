@@ -4,13 +4,13 @@ module Ruby
   class Hash < Node
     child_accessor :assocs, :ldelim, :rdelim, :separators
 
-    def initialize(assocs, position, whitespace, ldelim, rdelim, separators)
+    def initialize(assocs, whitespace, ldelim, rdelim, separators)
       self.ldelim = ldelim
       self.rdelim = rdelim
       self.assocs = Ruby::Composite.collection(assocs)
       self.separators = Ruby::Composite.collection(separators)
 
-      super(position, whitespace)
+      super(ldelim ? ldelim.position : assocs.first.position, whitespace)
     end
     
     def length(include_whitespace = false)
@@ -18,24 +18,17 @@ module Ruby
     end
     
     def [](key)
-      each { |assoc| return assoc.value if assoc.key.value == key }
-      nil
+      each { |assoc| return assoc.value if assoc.key.value == key } or nil
     end
     
     def []=(key, value)
       each { |assoc| return assoc.value = value if assoc.key.value == key }
       self << Assoc.new(key, value)
-      position_from(assocs.first, 2)
       self[key]
     end
     
     def delete(key)
       delete_if { |assoc| assoc.key.value == key }
-    end
-    
-    def position
-      raise "empty hash ... now what?" if empty?
-      @position ||= [first.key.row, first.key.column - 2]
     end
     
     def value

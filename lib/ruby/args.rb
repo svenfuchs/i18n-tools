@@ -5,9 +5,7 @@ module Ruby
     child_accessor :args, :separators
     attr_accessor :ldelim, :rdelim
 
-    def initialize(position = nil, whitespace = '', ldelim = '', rdelim = '', separators = [])
-      self.ldelim = ldelim
-      self.rdelim = rdelim
+    def initialize(position = nil) # , whitespace = '', ldelim = '', rdelim = '', separators = []
       self.separators = Composite.collection(separators)
       self.args = Composite.collection
 
@@ -26,8 +24,9 @@ module Ruby
     end
 
     def to_ruby(include_whitespace = false)
-      ruby = zip(separators).flatten.compact.map { |el| el.to_ruby(true) }.join
-      (include_whitespace ? whitespace : '') + ldelim.to_s + ruby + rdelim.to_s
+      nodes = [ldelim, zip(separators), rdelim].flatten.compact
+      return '' if nodes.empty?
+      nodes[0].to_ruby(include_whitespace) + nodes[1..-1].map { |node| node.to_ruby(true) }.join
     end
 
     def method_missing(method, *args, &block)
@@ -39,10 +38,10 @@ module Ruby
     child_accessor :arg
     attr_accessor :ldelim
     
-    def initialize(arg, position, ldelim)
+    def initialize(arg, ldelim)
       self.arg = arg
       self.ldelim = ldelim
-      super(position)
+      super(ldelim.position)
     end
 
     def to_ruby(include_whitespace = false)

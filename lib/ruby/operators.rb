@@ -5,10 +5,12 @@ module Ruby
     attr_accessor :operator, :operand
 
     def initialize(operator, operand)
-      @operator = operator
-      @operand = operand
+      self.operator = operator
+      self.operand = operand
 
-      position_from(operand, operator.to_s.length + ([:not].include?(operator) ? 1 : 0))
+      position = operand.position.dup
+      position[1] -= operator.to_s.length + ([:not].include?(operator) ? 1 : 0)
+      super(position)
     end
     
     def length(include_whitespace = false)
@@ -26,10 +28,10 @@ module Ruby
     attr_accessor :operator, :left, :right
 
     def initialize(operator, left, right)
-      @operator = operator
-      @left = left 
-      @right = right
-      @position = left.position
+      self.operator = operator
+      self.left = left 
+      self.right = right
+      super(left.position)
     end
     
     def length(include_whitespace = false)
@@ -45,10 +47,10 @@ module Ruby
     attr_accessor :condition, :left, :right
 
     def initialize(condition, left, right)
-      @condition = condition
-      @left = left
-      @right = right
-      @position = condition.position
+      self.condition = condition
+      self.left = left
+      self.right = right
+      super(condition.position)
     end
     
     def length(include_whitespace = false)

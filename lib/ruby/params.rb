@@ -2,15 +2,15 @@ require 'ruby/identifier'
 
 module Ruby
   class ParamsList < Node # join with ArgsList?
-    child_accessor :params, :separators
-    attr_accessor :ldelim, :rdelim
+    child_accessor :params, :separators, :ldelim, :rdelim
 
-    def initialize(params, position, whitespace, ldelim, rdelim, separators)
+    def initialize(params, whitespace, ldelim, rdelim, separators)
       self.ldelim = ldelim
       self.rdelim = rdelim
       self.separators = Ruby::Composite.collection(separators)
       self.params = Composite.collection(params)
 
+      position = ldelim ? ldelim.position : params.first.position rescue nil
       super(position, whitespace)
     end
     

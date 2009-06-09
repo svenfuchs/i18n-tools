@@ -15,8 +15,7 @@ module Ruby
   end
   
   class Block < Body
-    child_accessor :params
-    attr_accessor :rdelim, :ldelim
+    child_accessor :params, :rdelim, :ldelim
     
     def initialize(statements, params)
       self.params = params

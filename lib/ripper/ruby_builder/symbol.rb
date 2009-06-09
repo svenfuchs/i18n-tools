@@ -7,11 +7,11 @@ class Ripper
 
       def on_symbol(identifier)
         ldelim = pop_delim(:@symbeg)
-        Ruby::Symbol.new(identifier.token, ldelim.position, ldelim.whitespace, ldelim.token)
+        Ruby::Symbol.new(identifier.token, ldelim)
       end
 
       def on_dyna_symbol(symbol)
-        symbol.rdelim = pop_delim(:@tstring_end).token
+        symbol.rdelim = pop_delim(:@tstring_end)
         symbol
       end
 
@@ -21,7 +21,7 @@ class Ripper
 
       def on_xstring_new
         ldelim = pop_delim(:@symbeg)
-        Ruby::DynaSymbol.new(ldelim.position, ldelim.whitespace, ldelim.token)
+        Ruby::DynaSymbol.new(ldelim)
       end
     end
   end

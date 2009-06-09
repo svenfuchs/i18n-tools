@@ -76,7 +76,7 @@ class RipperToRubyHashTest < Test::Unit::TestCase
     hash = hash("  { :a  =>   :b  ,  :c=>:d,:e  => :f }")
     assocs = hash.assocs
     separators = hash.separators
-    
+
     assert_whitespace(assocs[0].key, ' ', 2)
     assert_whitespace(assocs[0].value, '   ', 2)
     assert_whitespace(assocs[0].operator, '  ', 2)

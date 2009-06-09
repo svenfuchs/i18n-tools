@@ -10,8 +10,7 @@ class Ripper
       end
 
       def on_mlhs_new
-        ldelim = pop_delim(:@lparen)
-        Ruby::MultiAssignment.new(:left, ldelim)
+        Ruby::MultiAssignment.new(:left, pop_delim(:@lparen))
       end
 
       def on_mlhs_add(assignment, ref)

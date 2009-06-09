@@ -7,9 +7,9 @@ class RipperToRubySymbolTest < Test::Unit::TestCase
     src = "    \n  \n :foo"
     symbol = node(src, Ruby::Symbol)
 
-    assert_equal ':', symbol.ldelim
+    assert_equal ':', symbol.ldelim.token
     assert_equal 'foo', symbol.token
-    assert_equal "    \n  \n ", symbol.whitespace
+    assert_equal "    \n  \n ", symbol.ldelim.whitespace
     assert_equal [2, 1], symbol.position
   
     assert_equal 4, symbol.length
@@ -28,9 +28,9 @@ class RipperToRubySymbolTest < Test::Unit::TestCase
     symbol = node(src, Ruby::DynaSymbol)
   
     assert_equal :foo, symbol.value
-    assert_equal ":'", symbol.ldelim
-    assert_equal "'", symbol.rdelim
-    assert_equal "    \n  \n ", symbol.whitespace
+    assert_equal ":'", symbol.ldelim.token
+    assert_equal "'", symbol.rdelim.token
+    assert_equal "    \n  \n ", symbol.ldelim.whitespace
     assert_equal [2, 1], symbol.position
   
     assert_equal 6, symbol.length

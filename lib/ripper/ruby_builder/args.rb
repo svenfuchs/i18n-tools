@@ -10,8 +10,8 @@ class Ripper
         if ldelim = pop_delim(:@lparen)
           args.position = ldelim.position
           args.whitespace = ldelim.whitespace
-          args.ldelim = ldelim.token
-          args.rdelim = rdelim.whitespace + rdelim.token if rdelim
+          args.ldelim = ldelim #.token
+          args.rdelim = rdelim #.token if rdelim # rdelim.whitespace + 
           args.separators = Ruby::Composite.collection(separators)
         end
         
@@ -21,7 +21,7 @@ class Ripper
       def on_args_add_block(args, block)
         if block
           ldelim = stack_ignore(:@rparen) { pop_delim(:@op) }
-          args << Ruby::BlockArg.new(block, ldelim.position, ldelim)
+          args << Ruby::BlockArg.new(block, ldelim) # ldelim.position
         end
         args
       end

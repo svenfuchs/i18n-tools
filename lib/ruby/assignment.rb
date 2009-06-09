@@ -8,10 +8,7 @@ module Ruby
       self.left = left
       self.right = right
       self.operator = operator
-    end
-
-    def position
-      @position ||= [left.row, left.column - 1]
+      super(left.position)
     end
 
     def to_ruby(include_whitespace = false)
@@ -22,8 +19,8 @@ module Ruby
   end
 
   class MultiAssignment < Node
-    child_accessor :refs, :separators, :star
-    attr_accessor :kind, :ldelim, :rdelim
+    attr_accessor :kind
+    child_accessor :refs, :separators, :ldelim, :rdelim, :star
 
     def initialize(kind, ldelim = nil, rdelim = nil, separators = [], star = nil, refs = [])
       self.kind = kind
@@ -35,14 +32,12 @@ module Ruby
     end
 
     def position
-      [first.row, first.column - 1]
+      @position ||= ldelim ? ldelim.position.dup : refs.first.position.dup
     end
 
     def to_ruby(include_whitespace = false)
-      (ldelim ? ldelim.to_ruby(include_whitespace) : '') +
-      (star ? star.to_ruby(true) : '') +
-      zip(separators).flatten.compact.map { |el| el.to_ruby(true) }.join +
-      (rdelim ? rdelim.to_ruby(include_whitespace) : '')
+      nodes = [ldelim, star, zip(separators), rdelim].flatten.compact
+      nodes[0].to_ruby(include_whitespace) + nodes[1..-1].map { |node| node.to_ruby(true) }.join
     end
 
     def method_missing(method, *args, &block)

@@ -8,11 +8,11 @@ class RipperToRubyStringTest < Test::Unit::TestCase
     string = node(src, Ruby::String)
 
     assert_equal 'foo', string.value
-    assert_equal "    \n  \n ", string.whitespace
+    assert_equal "    \n  \n ", string.ldelim.whitespace
     assert_equal [2, 1], string.position
     
-    assert_equal "'", string.ldelim
-    assert_equal "'", string.rdelim
+    assert_equal "'", string.ldelim.token
+    assert_equal "'", string.rdelim.token
 
     assert_equal 5, string.length
     assert_equal 9, string.src_pos
@@ -29,11 +29,11 @@ class RipperToRubyStringTest < Test::Unit::TestCase
     string = node(src, Ruby::String)
   
     assert_equal 'foo', string.value
-    assert_equal "    \n  \n ", string.whitespace
+    assert_equal "    \n  \n ", string.ldelim.whitespace
     assert_equal [2, 1], string.position
     
-    assert_equal "\"", string.ldelim
-    assert_equal "\"", string.rdelim
+    assert_equal "\"", string.ldelim.token
+    assert_equal "\"", string.rdelim.token
   
     assert_equal 5, string.length
     assert_equal 9, string.src_pos
@@ -50,11 +50,11 @@ class RipperToRubyStringTest < Test::Unit::TestCase
     string = node(src, Ruby::String)
   
     assert_equal 'foo', string.value
-    assert_equal "    \n  \n ", string.whitespace
+    assert_equal "    \n  \n ", string.ldelim.whitespace
     assert_equal [2, 1], string.position
     
-    assert_equal '%(', string.ldelim
-    assert_equal ')', string.rdelim
+    assert_equal '%(', string.ldelim.token
+    assert_equal ')', string.rdelim.token
     
     assert_equal 6, string.length
     assert_equal 9, string.src_pos
@@ -71,11 +71,11 @@ class RipperToRubyStringTest < Test::Unit::TestCase
     string = node(src, Ruby::String)
   
     assert_equal 'foo', string.value
-    assert_equal "    \n  \n ", string.whitespace
+    assert_equal "    \n  \n ", string.ldelim.whitespace
     assert_equal [2, 1], string.position
     
-    assert_equal '%.', string.ldelim
-    assert_equal '.', string.rdelim
+    assert_equal '%.', string.ldelim.token
+    assert_equal '.', string.rdelim.token
     
     assert_equal 6, string.length
     assert_equal 9, string.src_pos
