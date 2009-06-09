@@ -9,10 +9,6 @@ module Ruby
       super(position, whitespace)
     end
     
-    def length(include_whitespace = false)
-      token.length + (include_whitespace ? whitespace.length : 0)
-    end
-    
     def to_ruby(include_whitespace = false)
       (include_whitespace ? whitespace : '') + token
     end

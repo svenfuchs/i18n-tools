@@ -7,20 +7,18 @@ module Ruby
     def initialize(target, identifier, arguments = nil, block = nil)
       target = Unsupported.new(target) if target && !target.is_a?(Node)
 
-      super(target ? target.position : identifier.position )
-
       self.target = target
       self.identifier = identifier
-      self.arguments = arguments || ArgsList.new(position.dup)
+      self.arguments = arguments
       self.block = block
     end
-    
+
     def token
       identifier.token
     end
-    
-    def length(include_whitespace = false)
-      to_ruby(include_whitespace).length
+
+    def position
+      (target ? target.position : identifier.position).dup
     end
     
     def to_ruby(include_whitespace = false)
@@ -29,7 +27,9 @@ module Ruby
       else
         identifier.to_ruby(include_whitespace)
       end
-      ruby + arguments.to_ruby(true) + (block ? block.to_ruby(true) : '')
+      ruby + 
+      (arguments ? arguments.to_ruby(true) : '') + 
+      (block ? block.to_ruby(true) : '')
     end
   end
 end

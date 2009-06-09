@@ -117,7 +117,7 @@ module I18n
         @by_key.delete(call.key)
         @by_key[replacement] ||= []
         @by_key[replacement] << call
-p replacement
+
         call.replace!(replacement)
         save if built?
       end

@@ -24,6 +24,7 @@ module Ruby
       key, scope = compute_key_replacement(search, replacement)
       original_length = length
 
+      # args[0] = build_key(key)
       first.token = key.map { |k| k.to_s }.join('.')
       update_options(:scope, scope) # TODO fix positions!
 

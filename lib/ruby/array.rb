@@ -2,28 +2,23 @@ require 'ruby/node'
 
 module Ruby
   class Array < Node
-    child_accessor :elements, :ldelim, :rdelim, :separators
+    child_accessor :elements, :separators, :ldelim, :rdelim
+    # do |l| l.position = l.parent.position if l.parent.position end
     
-    def initialize(elements, whitespace, ldelim, rdelim = nil, separators = nil)
+    def initialize(elements, ldelim, rdelim = nil, separators = nil)
       self.ldelim = ldelim
       self.rdelim = rdelim
       self.elements = elements || []
       self.separators = separators || []
-
-      super(ldelim.position, whitespace)
+    end
+    
+    def position
+      ldelim.position.dup
     end
     
     def <<(element)
       elements << element
       self
-    end
-    
-    def whitespace=(whitespace)
-      ldelim.whitespace = whitespace
-    end
-    
-    def length(include_whitespace = false)
-      to_ruby(include_whitespace).length
     end
     
     def value

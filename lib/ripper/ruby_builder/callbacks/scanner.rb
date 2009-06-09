@@ -44,7 +44,7 @@ class Ripper
       def on_lbrace(*args)
         push(super)
       end
-
+      
       def on_rbrace(*args)
         push(super)
       end

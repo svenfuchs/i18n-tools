@@ -3,14 +3,24 @@ require 'ruby/composite'
 
 module Ruby
   class Node
+    class << self
+      def from_native(object)
+        from_ruby(object.inspect)
+      end
+      
+      def from_ruby(src)
+        Ripper::RubyBuilder.new(src).parse.statements.first
+      end
+    end
+    
     include Ansi
     include Composite
 
     attr_accessor :position, :whitespace
 
     def initialize(position = nil, whitespace = '')
-      @position = position.dup if position
-      @whitespace = whitespace if whitespace
+      self.position = position.dup if position
+      self.whitespace = whitespace if whitespace
     end
 
     def row
@@ -21,12 +31,16 @@ module Ruby
       position[1]
     end
 
-    def position
-      @position or raise "uninitialized position in #{self.class}"
+    # def position
+    #   @position or raise "uninitialized position in #{self.class}"
+    # end
+    
+    def position=(position)
+      @position = position.dup
     end
 
-    def length(*args)
-      raise "implement #{self.class}#length"
+    def length(include_whitespace = false)
+      to_ruby(include_whitespace).length
     end
 
     def filename
@@ -83,7 +97,7 @@ module Ruby
     protected
     
       def from_ruby(src)
-        Ripper::RubyBuilder.new(src).parse.statements.first
+        self.class.from_ruby(src)
       end
 
       def position_from(node, column_offset = 0)

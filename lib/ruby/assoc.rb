@@ -8,11 +8,10 @@ module Ruby
       self.key = key
       self.value = value
       self.operator = operator
-      super(key.position)
     end
     
-    def length(include_whitespace = false)
-      key.length(include_whitespace) + operator.length(true) + value.length(true)
+    def position
+      key.position.dup
     end
     
     def to_ruby(include_whitespace = false)

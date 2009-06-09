@@ -8,6 +8,10 @@ module Ruby
       self.statements = statements
     end
     
+    def position
+      statements.first.position.dup
+    end
+    
     def to_ruby(include_whitespace = false)
       statements.first.to_ruby(include_whitespace) +
       statements[1..-1].map { |s| s.to_ruby(true) }.join

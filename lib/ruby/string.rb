@@ -8,7 +8,14 @@ module Ruby
       self.ldelim = ldelim
       self.rdelim = rdelim
       self.contents = []
-      super(ldelim.position)
+    end
+    
+    def position
+      ldelim.position.dup
+    end
+    
+    def whitespace
+      ldelim.whitespace
     end
     
     def value
@@ -18,17 +25,14 @@ module Ruby
     def src_pos(include_whitespace = false)
       ldelim.src_pos(include_whitespace)
     end
-    
-    def length(include_whitespace = false)
-      (rdelim ? rdelim.length(true) : 0) +
-      contents.inject(0) { |sum, c| sum + c.length(include_whitespace) } + 
-      (ldelim ? ldelim.length(include_whitespace) : 0)
-    end
 
     def to_ruby(include_whitespace = false)
-      ldelim.to_ruby(include_whitespace) + 
-      map { |content| content.to_ruby(true) }.join + 
-      rdelim.to_ruby(true)
+      (include_whitespace ? whitespace : '') + 
+      nodes.map { |node| node.to_ruby(true) }.join.strip
+    end
+    
+    def nodes
+      [ldelim, contents, rdelim].flatten.compact
     end
     
     def method_missing(method, *args, &block)

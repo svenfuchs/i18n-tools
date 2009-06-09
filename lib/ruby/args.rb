@@ -2,14 +2,15 @@ require 'ruby/node'
 
 module Ruby
   class ArgsList < Node
-    child_accessor :args, :separators
-    attr_accessor :ldelim, :rdelim
+    child_accessor :args, :separators, :ldelim, :rdelim
 
-    def initialize(position = nil)
+    def initialize
       self.args = []
       self.separators = []
-
-      super(position, whitespace)
+    end
+    
+    def position
+      (ldelim ? ldelim.position : args.first.position).dup
     end
 
     def length(include_whitespace = false)
@@ -17,6 +18,12 @@ module Ruby
       separators.inject(0) { |sum, s| sum + s.length(true) } +
       ldelim.length + rdelim.length +
       (include_whitespace ? whitespace.length : 0)
+    end
+      
+    def []=(ix, arg)
+      arg.position = self[ix].position
+      root.update_positions(arg.row, arg.column + arg.length, arg.length - self[ix].length)
+      args[ix] = arg
     end
     
     def pop
@@ -26,7 +33,7 @@ module Ruby
     end
     
     def options
-      last.is_a?(Ruby::Hash) ? last : (self << Hash.new(nil, '', nil, nil)) # TODO fix positions!
+      last.is_a?(Ruby::Hash) ? last : (self << Hash.new(nil, nil, nil)) # TODO fix positions!
     end
     
     def update_options(key, value)

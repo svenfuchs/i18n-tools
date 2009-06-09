@@ -32,7 +32,7 @@ module Ruby
     end
 
     def position
-      @position ||= ldelim ? ldelim.position.dup : refs.first.position.dup
+      ldelim ? ldelim.position.dup : refs.first.position.dup
     end
 
     def to_ruby(include_whitespace = false)

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RipperRubyBuilderArgsTest < Test::Unit::TestCase
+class RipperRubyBuilderBlockTest < Test::Unit::TestCase
   include TestRubyBuilderHelper
 
   define_method :"test a block with arguments" do

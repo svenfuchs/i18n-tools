@@ -13,9 +13,15 @@ module Ruby
         super
       end
       
+      def []=(ix, object)
+        parent.children.delete(self[ix])
+        object.parent = parent
+        super
+      end
+      
       def pop
         object = super
-        parent.children.delete(object) # wtf, obviously children and args are out of sync
+        parent.children.delete(object)
         object
       end
 
@@ -32,12 +38,14 @@ module Ruby
     def self.included(target)
       target.class_eval do
         class << self
-          def child_accessor(*names)
+          def child_accessor(*names, &block)
             names.each do |name|
               attr_reader name
               define_method("#{name}=") do |value|
                 value = Composite::Array.new(value) if value.is_a?(::Array) 
-                set_child(name, value)
+                value.parent = self if value
+                instance_variable_set(:"@#{name}", value)
+                yield(value) if block_given?
               end
             end
           end
@@ -64,12 +72,5 @@ module Ruby
     def root
       root? ? self : parent.root
     end
-
-    protected
-
-      def set_child(name, value)
-        value.parent = self if value
-        instance_variable_set(:"@#{name}", value)
-      end
   end
 end

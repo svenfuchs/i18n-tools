@@ -2,32 +2,21 @@ class Ripper
   class RubyBuilder < Ripper::SexpBuilder
     module Args
       def on_arg_paren(args)
-        args ||= Ruby::ArgsList.new
+        args ||= Ruby::ArgsList.new # will be nil when call has an empty arglist, e.g. I18n.t()
 
-        rdelim = pop_delim(:@rparen)
-        separators = pop_delims(:@comma).reverse
-        
-        if ldelim = pop_delim(:@lparen)
-          args.position = ldelim.position
-          args.whitespace = ldelim.whitespace
-          args.ldelim = ldelim #.token
-          args.rdelim = rdelim #.token if rdelim # rdelim.whitespace + 
-          args.separators = separators
-        end
-        
+        pop_delim(:@rparen).tap { |r| args.rdelim = r if r }
+        pop_delims(:@comma).tap { |s| args.separators = s.reverse unless s.empty? }
+        pop_delim(:@lparen).tap { |l| args.ldelim = l if l }
+
         args
       end
 
       def on_args_add_block(args, block)
-        if block
-          ldelim = stack_ignore(:@rparen) { pop_delim(:@op) }
-          args << Ruby::BlockArg.new(block, ldelim) # ldelim.position
-        end
+        args << Ruby::BlockArg.new(block, stack_ignore(:@rparen) { pop_delim(:@op) }) if block
         args
       end
 
       def on_args_add(args, arg)
-        args.position rescue args.position = arg.position
         args << arg
         args
       end

@@ -12,14 +12,14 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
   
     assert_equal '(', args.ldelim.token
     assert_equal ')', args.rdelim.token
-    assert_equal '',  args.whitespace
-    
+    assert_equal '',  args.ldelim.whitespace
+  
     assert_equal 2,   args.separators.length
     assert_equal ',', args.separators[0].token
     assert_equal ' ', args.separators[0].whitespace
     assert_equal ',', args.separators[1].token
     assert_equal '',  args.separators[1].whitespace
-    
+  
     assert_equal [0, 1], args.position
     assert_equal 21, args.length
     assert_equal src, call.to_ruby
@@ -30,9 +30,9 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
     call = call(src)
     args = call.arguments
     string = args.first
-
+  
     assert_equal 'foo', string.first.value
-    
+  
     assert_equal call, args.parent
     assert_equal args, string.parent
     assert_equal src, string.root.src
@@ -87,7 +87,7 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
     assert_equal :bar, hash.assocs[0].value.value
     assert_equal :baz, hash.assocs[1].key.value
     assert_equal :buz, hash.assocs[1].value.value
-    
+  
     assert_equal src, call.to_ruby
   end
   
@@ -108,7 +108,7 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
     src = "t([:foo, :bar, :baz])"
     call = build(src).statements.first
     array = call.arguments.first
-    
+  
     assert_equal :foo, array[0].value
     assert_equal :bar, array[1].value
     assert_equal :baz, array[2].value
@@ -120,7 +120,7 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
     src = "t(nil)"
     call = build(src).statements.first
     kw = call.arguments.first
-    
+  
     assert_equal nil, kw.value
     assert_equal src, call.to_ruby
   end
@@ -129,7 +129,7 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
     src = "t(1)"
     call = build(src).statements.first
     integer = call.arguments.first
-    
+  
     assert_equal 1, integer.value
     assert_equal src, call.to_ruby
   end
@@ -138,8 +138,20 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
     src = "t(1.1)"
     call = build(src).statements.first
     float = call.arguments.first
-    
+  
     assert_equal 1.1, float.value
     assert_equal src, call.to_ruby
+  end
+  
+  define_method :"test: replace argument" do
+    call = call("t(:foo, :bar)")
+    args = call.arguments
+    foo, bar = args
+  
+    baz = Ruby::Symbol.from_native(:baz)
+    args[0] = baz
+  
+    assert_equal args, baz.parent
+    assert_equal [0, 2], baz.position
   end
 end

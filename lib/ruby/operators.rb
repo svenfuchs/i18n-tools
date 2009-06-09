@@ -7,20 +7,15 @@ module Ruby
     def initialize(operator, operand)
       self.operator = operator
       self.operand = operand
-
-      position = operand.position.dup
-      position[1] -= operator.to_s.length + ([:not].include?(operator) ? 1 : 0)
-      super(position)
     end
     
-    def length(include_whitespace = false)
-      to_ruby.length
+    def position
+      operator.position.dup
     end
     
-    def to_ruby
-      ruby = operator.to_s
-      ruby << ' ' if [:not].include?(operator)
-      ruby << operand.to_ruby
+    def to_ruby(include_whitespace = false)
+      operator.to_ruby(include_whitespace) +
+      operand.to_ruby(true)
     end
   end
   
@@ -31,34 +26,36 @@ module Ruby
       self.operator = operator
       self.left = left 
       self.right = right
-      super(left.position)
     end
     
-    def length(include_whitespace = false)
-      to_ruby.length
+    def position
+      left.position.dup
     end
     
-    def to_ruby
-      "#{left.to_ruby} #{operator} #{right.to_ruby}"
+    def to_ruby(include_whitespace = false)
+      left.to_ruby(include_whitespace) + 
+      operator.to_ruby(true) +
+      right.to_ruby(true)
     end
   end
   
   class IfOp < Node
-    attr_accessor :condition, :left, :right
+    attr_accessor :condition, :left, :right, :operators
 
-    def initialize(condition, left, right)
+    def initialize(condition, left, right, operators)
       self.condition = condition
       self.left = left
       self.right = right
-      super(condition.position)
+      self.operators = operators
     end
     
-    def length(include_whitespace = false)
-      to_ruby.length
+    def position
+      condition.position.dup
     end
     
-    def to_ruby
-      "#{condition.to_ruby} ? #{left.to_ruby} : #{right.to_ruby}"
+    def to_ruby(include_whitespace = false)
+      condition.to_ruby(include_whitespace) +
+      operators.zip([left, right]).flatten.map { |node| node.to_ruby(true) }.join
     end
   end
 end

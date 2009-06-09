@@ -20,7 +20,7 @@ class Ripper
         tokens, ignored = [], []
 
         while !empty? && !(max && tokens.length >= max)
-          if types.include?(last.type) && (value.nil? || last.value == value)
+          if types.include?(last.type) && value_matches?(last, value)
             tokens << super()
           elsif ignore?(last.type)
             ignored << super()
@@ -43,6 +43,19 @@ class Ripper
         @ignore_stack.pop
         result
       end
+      
+      protected
+      
+        def value_matches?(token, value)
+          case value
+          when nil
+            true
+          when ::Array
+            value.include?(token.value)
+          else
+            token.value == value
+          end
+        end
     end
   end
 end

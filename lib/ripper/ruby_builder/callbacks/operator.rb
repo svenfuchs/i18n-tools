@@ -1,17 +1,18 @@
 class Ripper
   class RubyBuilder < Ripper::SexpBuilder
     module Operator
-      def on_unary(*args)
-        Ruby::Unary.new(*args)
+      def on_unary(operator, operand)
+        operator = pop_delim(:@op) || pop_delim(:@kw, :value => 'not')
+        Ruby::Unary.new(operator, operand)
       end
 
-      def on_binary(*args)
-        left, type, right = *args
-        Ruby::Binary.new(type, left, right)
+      def on_binary(left, operator, right)
+        operator = pop_delim(:@op) || pop_delim(:@kw, :value => %w(and or))
+        Ruby::Binary.new(operator, left, right)
       end
 
-      def on_ifop(*args)
-        Ruby::IfOp.new(*args)
+      def on_ifop(condition, left, right)
+        Ruby::IfOp.new(condition, left, right, pop_delims(:@op).reverse)
       end
     end
   end

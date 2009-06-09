@@ -23,7 +23,7 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     call = program.statements.first
   
     assert_equal 't', call.identifier.token
-    assert call.arguments.empty?
+    assert !call.arguments
   
     assert_equal program, call.parent
     assert_equal src, call.root.src

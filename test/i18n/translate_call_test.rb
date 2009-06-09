@@ -102,61 +102,60 @@ class RipperToRubyTranslateCallReplaceTest < Test::Unit::TestCase
   def call(key = :bar)
     index = I18n::Keys::Index.new(@project, :pattern => '/source_*.{rb}')
     index.update
-    index.by_key[key.to_sym].first
+    index.by_key[key].first
   end
 
-  def test_replace_simple_symbol_with_simple_symbol
-    bar = call(:bar)
-    bar.parent = nil
-    bar.replace_key!(:bar, :oooooooo)
-    assert_equal "    t(\e[0;31;1m:oooooooo\e[0m)\n", bar.key.line(true)
-  end
+  # def test_replace_simple_symbol_with_simple_symbol
+  #   bar = call(:bar)
+  #   bar.replace_key!(:bar, :oooooooo)
+  #   assert_equal "    t(:oooooooo)", bar.line
+  # end
 
   # def test_replace_simple_symbol_with_quoted_symbol
   #   bar = call(:bar)
-  #   bar.replace!(:'oooo.oooo')
-  #   assert_equal "    t(\e[0;31;1m:\"oooo.oooo\"\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, :'oooo.oooo')
+  #   assert_equal "    t(:\"oooo.oooo\")", bar.line
   # end
-  # 
+  
   # def test_replace_simple_symbol_with_string
   #   bar = call(:bar)
-  #   bar.replace!('oooooooo')
-  #   assert_equal "    t(\e[0;31;1m:oooooooo\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, 'oooooooo')
+  #   assert_equal "    t(\"oooooooo\")", bar.line
   # end
   # 
   # def test_replace_quoted_symbol_with_simple_symbol
   #   bar = call(:'foo.bar')
-  #   bar.replace!(:oooooooo)
-  #   assert_equal "    t(\e[0;31;1m:oooooooo\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, :oooooooo)
+  #   assert_equal "    t(oooooooo)", bar.line
   # end
   # 
   # def test_replace_quoted_symbol_with_quoted_symbol
   #   bar = call(:'foo.bar')
-  #   bar.replace!(:'oooo.oooo')
-  #   assert_equal "    t(\e[0;31;1m:\"oooo.oooo\"\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, :'oooo.oooo')
+  #   assert_equal "    t(:\"oooo.oooo\")", bar.line
   # end
   # 
   # def test_replace_quoted_symbol_with_string
   #   bar = call(:'foo.bar')
-  #   bar.replace!('oooooooo')
-  #   assert_equal "    t(\e[0;31;1m:oooooooo\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, 'oooooooo')
+  #   assert_equal "    t(\"oooooooo\")", bar.line
   # end
   # 
   # def test_replace_string_with_simple_symbol
   #   bar = call('bar_1')
-  #   bar.replace!(:oooooooo)
-  #   assert_equal "    t(\e[0;31;1m:oooooooo\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, :oooooooo)
+  #   assert_equal "    t(:oooooooo)", bar.line
   # end
   # 
   # def test_replace_string_with_quoted_symbol
   #   bar = call('bar_1')
-  #   bar.replace!(:'oooo.oooo')
-  #   assert_equal "    t(\e[0;31;1m:\"oooo.oooo\"\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, :'oooo.oooo')
+  #   assert_equal "    t(:\"oooo.oooo\")", bar.line
   # end
   # 
   # def test_replace_string_with_string
   #   bar = call('bar_1')
-  #   bar.replace!('oooooooo')
-  #   assert_equal "    t(\e[0;31;1m:oooooooo\e[0m)\n", bar.key.line(true)
+  #   bar.replace_key!(:bar, 'oooooooo')
+  #   assert_equal "    t(\"oooooooo\")", bar.line
   # end
 end

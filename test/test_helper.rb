@@ -32,6 +32,10 @@ module TestRubyBuilderHelper
   def arguments(src)
     call(src).arguments
   end
+
+  def method(src)
+    node(src, Ruby::Method)
+  end
 end
 
 # class A < Array

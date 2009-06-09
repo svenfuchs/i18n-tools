@@ -6,19 +6,23 @@ module Ruby
     
     def initialize(token, ldelim)
       self.ldelim = ldelim
-      super(token, ldelim.position)
+      super(token)
+    end
+    
+    def position
+      ldelim.position.dup
+    end
+    
+    def position=(position)
+      ldelim.position = position
+    end
+    
+    def whitespace
+      ldelim.whitespace
     end
     
     def value
       token.to_sym
-    end
-    
-    def whitespace
-      ldelim.whitespace # TODO remove this?
-    end
-    
-    def length(include_whitespace = false)
-      ldelim.length(include_whitespace) + token.length
     end
     
     def to_ruby(include_whitespace = false)

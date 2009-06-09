@@ -9,15 +9,23 @@ module Ruby
       self.rdelim = rdelim
       self.separators = separators
       self.params = params
-
-      position = ldelim ? ldelim.position : params.first.position rescue nil
-      super(position, whitespace)
     end
-    
+
+    def position
+      (ldelim ? ldelim.position : params.first.position).dup
+    end
+
+    def whitespace
+      ldelim ? ldelim.whitespace : params.first.whitespace
+    end
+
     def to_ruby(include_whitespace = false)
-      (ldelim ? ldelim.to_ruby(include_whitespace) : '') + 
-      zip(separators).flatten.compact.map { |el| el.to_ruby(true) }.join + 
-      (rdelim ? rdelim.to_ruby(true) : '')
+      (include_whitespace ? whitespace : '') +
+      nodes.map { |el| el.to_ruby(true) }.join.strip
+    end
+
+    def nodes
+      [ldelim, zip(separators), rdelim].flatten.compact
     end
 
     def method_missing(method, *args, &block)
@@ -26,17 +34,19 @@ module Ruby
   end
 
   class RestParam < Identifier
+    child_accessor :ldelim
+
     def initialize(token, position, ldelim)
-      @ldelim = ldelim
+      self.ldelim = ldelim
       super(token, position)
     end
-    
+
     def column
       super - 1
     end
 
     def to_ruby(include_whitespace = false)
-      @ldelim.to_ruby(include_whitespace) + super(true)
+      ldelim.to_ruby(include_whitespace) + super(true)
     end
   end
 end

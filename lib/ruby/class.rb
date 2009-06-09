@@ -6,7 +6,7 @@ module Ruby
 
     def initialize(const, super_class, body)
       position = const.position
-      position[1] -= 6 # TODO take whitespace into account
+      position[1] -= 6 # FIXME use class keyword as ldelim
 
       self.super_class = super_class
       self.body = body
