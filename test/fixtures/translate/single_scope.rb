@@ -1,0 +1,43 @@
+t :bar,:scope=>:foo
+t :bar, :scope=>:foo
+t :bar,:scope =>:foo
+t :bar,:scope=> :foo
+t :bar, :scope =>:foo
+t :bar, :scope=> :foo
+t :bar, :scope =>:foo
+t :bar, :scope => :foo
+
+t(:bar,:scope=>:foo)
+t(:bar, :scope=>:foo)
+t(:bar,:scope =>:foo)
+t(:bar,:scope=> :foo)
+t(:bar,:scope=>:foo )
+t(:bar, :scope =>:foo)
+t(:bar, :scope=> :foo)
+t(:bar, :scope=>:foo )
+t(:bar, :scope =>:foo)
+t(:bar, :scope => :foo)
+t(:bar, :scope =>:foo )
+t(:bar, :scope => :foo )
+
+t :bar,:scope=>[:foo]
+t :bar, :scope=>[:foo]
+t :bar,:scope =>[:foo]
+t :bar,:scope=> [:foo]
+t :bar, :scope =>[:foo]
+t :bar, :scope=> [:foo]
+t :bar, :scope =>[:foo]
+t :bar, :scope => [:foo]
+
+t(:bar,:scope=>[:foo])
+t(:bar, :scope=>[:foo])
+t(:bar,:scope =>[:foo])
+t(:bar,:scope=> [:foo])
+t(:bar,:scope=>[:foo] )
+t(:bar, :scope =>[:foo])
+t(:bar, :scope=> [:foo])
+t(:bar, :scope=>[:foo] )
+t(:bar, :scope =>[:foo])
+t(:bar, :scope => [:foo])
+t(:bar, :scope =>[:foo] )
+t(:bar, :scope => [:foo] )

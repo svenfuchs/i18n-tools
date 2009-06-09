@@ -79,6 +79,8 @@ a, \n b = \n c, \n d
 t
 t()
 t(:a)
+t :a
+t  :a
 
 I18n.t
 I18n.t()

@@ -1,0 +1,43 @@
+t :baz,:scope=>:"foo.bar"
+t :baz, :scope=>:"foo.bar"
+t :baz,:scope =>:"foo.bar"
+t :baz,:scope=> :"foo.bar"
+t :baz, :scope =>:"foo.bar"
+t :baz, :scope=> :"foo.bar"
+t :baz, :scope =>:"foo.bar"
+t :baz, :scope => :"foo.bar"
+
+t(:baz,:scope=>:"foo.bar")
+t(:baz, :scope=>:"foo.bar")
+t(:baz,:scope =>:"foo.bar")
+t(:baz,:scope=> :"foo.bar")
+t(:baz,:scope=>:"foo.bar" )
+t(:baz, :scope =>:"foo.bar")
+t(:baz, :scope=> :"foo.bar")
+t(:baz, :scope=>:"foo.bar" )
+t(:baz, :scope =>:"foo.bar")
+t(:baz, :scope => :"foo.bar")
+t(:baz, :scope =>:"foo.bar" )
+t(:baz, :scope => :"foo.bar" )
+
+t :baz,:scope=>[:foo, :bar]
+t :baz, :scope=>[:foo, :bar]
+t :baz,:scope =>[:foo, :bar]
+t :baz,:scope=> [:foo, :bar]
+t :baz, :scope =>[:foo, :bar]
+t :baz, :scope=> [:foo, :bar]
+t :baz, :scope =>[:foo, :bar]
+t :baz, :scope => [:foo, :bar]
+
+t(:baz,:scope=>[:foo, :bar])
+t(:baz, :scope=>[:foo, :bar])
+t(:baz,:scope =>[:foo, :bar])
+t(:baz,:scope=> [:foo, :bar])
+t(:baz,:scope=>[:foo, :bar] )
+t(:baz, :scope =>[:foo, :bar])
+t(:baz, :scope=> [:foo, :bar])
+t(:baz, :scope=>[:foo, :bar] )
+t(:baz, :scope =>[:foo, :bar])
+t(:baz, :scope => [:foo, :bar])
+t(:baz, :scope =>[:foo, :bar] )
+t(:baz, :scope => [:foo, :bar] )

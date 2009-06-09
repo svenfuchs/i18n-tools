@@ -2,7 +2,6 @@ require 'ruby/call'
 require 'i18n/ruby/call'
 
 module Ruby
-  # class TranslateArgsList < ArgsList
   module TranslateArgsList
     def full_key
       normalize_keys(key, scope)

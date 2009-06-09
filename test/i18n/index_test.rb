@@ -30,13 +30,13 @@ class I18nIndexTest < Test::Unit::TestCase
   end
   
   def test_calls_built_lazily_on_a_fresh_index
-    index = Keys::Index.new(@project, :default)
+    index = Keys::Index.new(@project, :default, :pattern => '/source_*.{rb}')
     expected = [:bar, :baaar, :baar, 'bar', 'bar_1', :bar_2]
     assert_equal expected, index.calls.select { |key| expected.include?(key.key) }.map { |c| c.key }
   end
   
   def test_calls_from_marshalled_index
-    index = Keys::Index.new(@project, :marshalled)
+    index = Keys::Index.new(@project, :marshalled, :pattern => '/source_*.{rb}')
     index.update
     index = @project.indices.load(:marshalled)
     expected = [:bar, :baaar, :baar, 'bar', 'bar_1', :bar_2]
@@ -93,7 +93,7 @@ class I18nIndexTest < Test::Unit::TestCase
   end
   
   def test_index_inject_with_keys_given_iterates_over_calls_of_given_keys
-    index = Keys::Index.new(@project, :pattern => '/**/*.{rb}')
+    index = Keys::Index.new(@project, :pattern => '/**/source_*.{rb}')
     expected = [:bar, :baaar, :baar, 'bar']
     result = index.inject([], :bar, :baaar, :baar) { |result, call| result << call.key }
     assert_equal expected, result
@@ -125,17 +125,17 @@ class I18nIndexTest < Test::Unit::TestCase
     assert_equal /\.foo\.bar\./, Keys::Index.new(@project).send(:key_pattern, :'*.foo.bar.*')
   end
   
-  # def test_replace_replaces_key_without_wildcard_in_source_file
-  #   index = @project.indices.create(:replace)
-  #   bar = index.by_key[:bar].first
-  # 
-  #   index.replace!(bar, 'foo')
-  #   assert_equal "    t(:foo)\n", bar.line
-  # 
-  #   index = @project.indices.load(:replace)
-  #   foo = index.by_key[:foo].first
-  #   assert foo == bar
-  # end
+  def test_replace_replaces_key_without_wildcard_in_source_file
+    index = @project.indices.create(:replace)
+    bar = index.by_key[:bar].first
+  
+    index.replace!(bar, 'foo')
+    assert_equal "    t(:foo)\n", bar.line
+  
+    index = @project.indices.load(:replace)
+    foo = index.by_key[:foo].first
+    assert foo == bar
+  end
   
   # TODO
   # - output feedback on replace when --verbose is on

@@ -6,8 +6,8 @@ module Ruby
     attr_accessor :ldelim, :rdelim
 
     def initialize(position = nil)
-      self.separators = []
       self.args = []
+      self.separators = []
 
       super(position, whitespace)
     end
@@ -20,15 +20,17 @@ module Ruby
     end
     
     def pop
-      [args.pop, separators.pop]
+      arg = args.pop
+      sep = separators.pop
+      [arg, sep]
     end
     
     def options
-      last.is_a?(Ruby::Hash) ? last : (self << Ruby::Hash.new) # TODO fix positions!
+      last.is_a?(Ruby::Hash) ? last : (self << Hash.new(nil, '', nil, nil)) # TODO fix positions!
     end
     
     def update_options(key, value)
-      value ? options[key] = from_ruby(' ' + value.inspect) : last.delete(key)
+      value ? options[key] = from_ruby(' ' + value.inspect) : options.delete(key)
       pop if last.empty?
     end
 

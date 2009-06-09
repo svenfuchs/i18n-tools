@@ -4,13 +4,17 @@ module Ruby
   class Hash < Node
     child_accessor :assocs, :ldelim, :rdelim, :separators
 
-    def initialize(assocs, whitespace, ldelim, rdelim, separators)
+    def initialize(assocs = nil, whitespace = '', ldelim = nil, rdelim = nil, separators = nil)
       self.ldelim = ldelim
       self.rdelim = rdelim
-      self.assocs = assocs
-      self.separators = separators
+      self.assocs = assocs || []
+      self.separators = separators || []
 
-      super(ldelim ? ldelim.position : assocs.first.position, whitespace)
+      super(nil, whitespace)
+    end
+    
+    def position
+      @position ||= ldelim ? ldelim.position.dup : assocs.first.position.dup
     end
     
     def length(include_whitespace = false)

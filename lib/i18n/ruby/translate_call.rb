@@ -3,7 +3,6 @@ require 'i18n/ruby/call'
 require 'i18n/ruby/translate_args_list'
 
 module Ruby
-  # class TranslateCall < Call
   module TranslateCall
     def full_key
       arguments.full_key
@@ -19,6 +18,10 @@ module Ruby
     
     def key_matches?(keys)
       arguments.key_matches?(keys)
+    end
+    
+    def replace_key!(search, replacement)
+      arguments.replace_key!(search, replacement)
     end
   end
 end

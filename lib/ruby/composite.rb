@@ -12,6 +12,12 @@ module Ruby
         object.parent = self.parent unless object.parent == self.parent
         super
       end
+      
+      def pop
+        object = super
+        parent.children.delete(object) # wtf, obviously children and args are out of sync
+        object
+      end
 
       def parent=(parent)
         each { |object| object.parent = parent }
@@ -30,7 +36,7 @@ module Ruby
             names.each do |name|
               attr_reader name
               define_method("#{name}=") do |value|
-                value = Composite::Array.new(value) if value.is_a?(::Array)
+                value = Composite::Array.new(value) if value.is_a?(::Array) 
                 set_child(name, value)
               end
             end

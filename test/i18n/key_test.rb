@@ -126,3 +126,9 @@ class I18nKeyTest < Test::Unit::TestCase
     assert_equal 'e(:e)',                   calls['e'].src
   end
 end
+
+# def I18n
+#   define_method :"test: subsequently replace single key :foo with :fuh" do
+#     index = @project.indices.create(:replace)
+#   end
+# end

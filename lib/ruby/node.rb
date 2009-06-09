@@ -79,7 +79,7 @@ module Ruby
     def line_tail
       line[(column + length - 1)..-1].to_s
     end
-
+    
     protected
     
       def from_ruby(src)
