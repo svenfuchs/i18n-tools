@@ -1,24 +1,20 @@
 require 'ruby/const'
 
 module Ruby
-  class Class < Const
-    child_accessor :super_class, :body
+  class Class < Node
+    child_accessor :const, :operator, :super_class, :body, :ldelim, :rdelim
 
-    def initialize(const, super_class, body)
-      position = const.position
-      position[1] -= 6 # FIXME use class keyword as ldelim
-
+    def initialize(const, operator, super_class, body, ldelim, rdelim)
+      self.const = const
+      self.operator = operator
       self.super_class = super_class
       self.body = body
-
-      super(const.token, position)
+      self.ldelim = ldelim
+      self.rdelim = rdelim
     end
-
-    def to_ruby
-      ruby = "class #{super}"
-      ruby << " < #{super_class.to_ruby}" if super_class
-      ruby << "\n" << body.to_ruby
-      ruby << "\nend"
+    
+    def nodes
+      [ldelim, const, operator, super_class, body, rdelim]
     end
   end
 end

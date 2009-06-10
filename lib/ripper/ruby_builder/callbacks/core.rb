@@ -6,7 +6,7 @@ class Ripper
       end
 
       def on_kw(token)
-        if %w(do end not and or).include?(token)
+        if %w(class def do end not and or).include?(token)
           return push(super) 
         else
           Ruby::Keyword.new(token, position, pop_whitespace)
@@ -26,11 +26,17 @@ class Ripper
       end
 
       def on_class(const, super_class, body)
-        Ruby::Class.new(const, super_class, body)
+        rdelim = pop_delim(:@kw, :value => 'end')
+        operator = pop_delim(:@op)
+        ldelim = pop_delim(:@kw, :value => 'class')
+        Ruby::Class.new(const, operator, super_class, body, ldelim, rdelim)
       end
 
       def on_def(identifier, params, body)
-        Ruby::Method.new(identifier.token, identifier.position, params, body)
+        rdelim, ldelim = stack_ignore(:@op, :@comma, :@lparen, :@rparen) do 
+          pop_delims(:@kw, :value => %w(def end))
+        end
+        Ruby::Method.new(identifier, params, body, ldelim, rdelim)
       end
 
       def on_const_ref(const)

@@ -64,6 +64,10 @@ class Ripper
       def on_words_sep(*args)
         push(super)
       end
+      
+      def on_period(*args)
+        push(super)
+      end
 
       # def on_words_beg(*args)
       #   super.tap { |result| p result }

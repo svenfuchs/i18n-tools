@@ -32,7 +32,7 @@ module Ruby
     end
 
     def position
-      @position || nodes.each { |n| return n.position.dup if n } && raise("position not set in #{self.class}")
+      @position || nodes.each { |n| return n.position.dup if n } && nil # raise("position not set in #{self.class}")
     end
     
     def position=(position)
@@ -48,8 +48,7 @@ module Ruby
     end
 
     def to_ruby(include_whitespace = false)
-      (include_whitespace ? whitespace : '').tap {|a| p a unless a.is_a?(::String)} + 
-      nodes.map { |node| node.to_ruby(true) }.join.strip
+      (include_whitespace ? whitespace : '') + nodes.map { |node| node.to_ruby(true) }.join.strip
     end
     
     def nodes
@@ -119,7 +118,8 @@ module Ruby
       end
 
       def update_positions(row, column, offset_column)
-        position[1] += offset_column if self.row == row && self.column > column
+        pos = self.position
+        pos[1] += offset_column if pos && self.row == row && self.column > column
         children.each { |c| c.send(:update_positions, row, column, offset_column) }
       end
   end

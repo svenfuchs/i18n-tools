@@ -36,6 +36,10 @@ module TestRubyBuilderHelper
   def method(src)
     node(src, Ruby::Method)
   end
+
+  def const(src)
+    node(src, Ruby::Const)
+  end
 end
 
 # class A < Array

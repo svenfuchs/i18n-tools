@@ -25,11 +25,7 @@ module Ruby
 
     def initialize(token, position, ldelim)
       self.ldelim = ldelim
-      super(token, position)
-    end
-
-    def column
-      super - 1
+      super(token, ldelim.position)
     end
 
     def to_ruby(include_whitespace = false)

@@ -105,17 +105,17 @@ class RipperToRubyTranslateCallReplaceTest < Test::Unit::TestCase
     index.by_key[key].first
   end
 
-  # def test_replace_simple_symbol_with_simple_symbol
-  #   bar = call(:bar)
-  #   bar.replace_key!(:bar, :oooooooo)
-  #   assert_equal "    t(:oooooooo)", bar.line
-  # end
+  def test_replace_simple_symbol_with_simple_symbol
+    bar = call(:bar)
+    bar.replace_key!(:bar, :oooooooo)
+    assert_equal "    t(:oooooooo)", bar.line
+  end
 
-  # def test_replace_simple_symbol_with_quoted_symbol
-  #   bar = call(:bar)
-  #   bar.replace_key!(:bar, :'oooo.oooo')
-  #   assert_equal "    t(:\"oooo.oooo\")", bar.line
-  # end
+  def test_replace_simple_symbol_with_quoted_symbol
+    bar = call(:bar)
+    bar.replace_key!(:bar, :'oooo.oooo')
+    assert_equal "    t(:\"oooo.oooo\")", bar.line
+  end
   
   # def test_replace_simple_symbol_with_string
   #   bar = call(:bar)

@@ -1,13 +1,19 @@
 require 'ruby/node'
 
 module Ruby
-  class Method < Identifier
-    child_accessor :params, :body
+  class Method < Node
+    child_accessor :identifier, :params, :body, :ldelim, :rdelim
 
-    def initialize(token, position, params, body)
-      super(token, position)
+    def initialize(identifier, params, body, ldelim, rdelim)
+      self.identifier = identifier
       self.params = params
       self.body = body
+      self.ldelim = ldelim
+      self.rdelim = rdelim
+    end
+    
+    def nodes
+      [ldelim, identifier, params, body, rdelim]
     end
   end
 end
