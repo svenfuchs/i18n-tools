@@ -4,49 +4,63 @@ require 'i18n/ruby/call'
 module Ruby
   module TranslateArgsList
     def full_key
-      normalize_keys(key, scope)
+      normalize_keys(scope, key)
     end
-    
+
     def key
       eval(first.to_ruby) if first
     end
-    
+
     def scope
       last.is_a?(Ruby::Hash) ? last.value[:scope] : nil
     end
-    
+
     def key_matches?(keys)
       keys = normalize_keys(keys)
       keys == full_key[0, keys.length]
     end
-    
+
     def replace_key!(search, replacement)
-      key, scope = compute_key_replacement(search, replacement)
+      key, scope = compute_replacement_keys(search, replacement)
       original_length = length
 
-      # args[0] = build_key(key)
-      first.token = key.map { |k| k.to_s }.join('.')
+      args[0] = from_native(key.map { |k| k.to_s }.join('.').to_sym)
       update_options(:scope, scope) # TODO fix positions!
 
       root.replace_src(row, column, original_length, to_ruby)
     end
-    
+
     protected
-    
-      def compute_key_replacement(search, replacement)
+
+      def compute_replacement_keys(search, replacement)
+        search = normalize_keys(search)
+        replacement = normalize_keys(replacement)
+
         key = normalize_keys(self.key)
-        scope = normalize_keys(nil, self.scope)
-      
-        scope = self.full_key
-        scope[0, search.length] = replacement
-        key = scope.slice!(-key.length, key.length) # i.e. we preserve the key length?
-        scope = nil if scope.empty?
-      
+        scope = normalize_keys(self.scope)
+        all = scope + key
+
+        all[key_index(search), search.length] = replacement
+        if scope.empty?
+          scope = nil # all.slice!(0, scope.length) 
+          key = all
+        else
+          key = all.slice!(-key.length, key.length)
+          scope = all.empty? ? nil : all
+        end
+
+        # key = all.empty? ? [scope.pop] : all
+
         [key, scope]
       end
-    
-      def normalize_keys(key, scope = nil)
-        I18n.send(:normalize_translation_keys, nil, key, scope)
+
+      def key_index(search)
+        (all = full_key).each_index { |ix| return ix if all[ix, search.length] == search } and nil
+      end
+
+      def normalize_keys(*args)
+        args.flatten.map { |k| k.to_s.split(/\./) }.
+             flatten.map { |k| k.to_sym }
       end
   end
 end

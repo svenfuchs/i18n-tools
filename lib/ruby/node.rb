@@ -4,12 +4,14 @@ require 'ruby/composite'
 module Ruby
   class Node
     class << self
-      def from_native(object)
-        from_ruby(object.inspect)
+      def from_native(object, position = nil)
+        from_ruby(object.inspect, position)
       end
       
-      def from_ruby(src)
-        Ripper::RubyBuilder.new(src).parse.statements.first
+      def from_ruby(src, position = nil)
+        Ripper::RubyBuilder.new(src).parse.statements.first.tap do |node|
+          node.position = position if position
+        end
       end
     end
     
@@ -110,6 +112,10 @@ module Ruby
     
       def from_ruby(src)
         self.class.from_ruby(src)
+      end
+    
+      def from_native(src)
+        self.class.from_native(src)
       end
 
       def position_from(node, column_offset = 0)

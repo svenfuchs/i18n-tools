@@ -59,7 +59,7 @@ module I18n
       def build
         @calls = find_calls
         @calls.each do |call|
-          @keys << call.key
+          @keys << call.key unless @keys.include?(call.key)
           (@by_key[call.key] ||= []) << call # uh, Argument.hash doesn't seem to work??
         end
         @built = true

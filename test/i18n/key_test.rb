@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-require 'i18n/ruby/translate_call'
+require 'i18n/project'
 # require 'yaml'
 
 class I18nKeyTest < Test::Unit::TestCase
@@ -15,6 +15,11 @@ class I18nKeyTest < Test::Unit::TestCase
     @program = Ripper::RubyBuilder.new(src).parse
     @args = @program.statement { |s| s.token == 't' }.arguments.to_translate_args_list
     @foo = @program.statement { |s| s.token == 'foo' }
+  end
+  
+  def index
+    project = I18n::Project.new(:root_dir => File.expand_path(File.dirname(__FILE__) + '/../fixtures'))
+    I18n::Keys::Index.new(project, :pattern => '/translate/single_key.rb')
   end
   
   define_method :"test: replace_key :foo with :fuh in (:baz, :scope => [:foo, :bar])" do
@@ -98,7 +103,7 @@ class I18nKeyTest < Test::Unit::TestCase
   end
   
   define_method :"test: replace_key [:foo, :bar] with [:foo, :bar, :baz] in (:bar, :scope => [:foo])" do
-    init(pre + "t(:baz, :scope => [:foo])" + post)
+    init(pre + "t(:bar, :scope => [:foo])" + post)
     old_foo_src = @foo.src
   
     @args.replace_key!([:foo, :bar], [:foo, :bar, :baz])
@@ -125,10 +130,10 @@ class I18nKeyTest < Test::Unit::TestCase
     assert_equal 't(:d, :scope => [:d])',   calls['d'].src
     assert_equal 'e(:e)',                   calls['e'].src
   end
-end
 
-# def I18n
-#   define_method :"test: subsequently replace single key :foo with :fuh" do
-#     index = @project.indices.create(:replace)
-#   end
-# end
+  # define_method :"test: subsequently replace single key :foo with :fuh" do
+  #   index.by_key[:foo].each do |call|
+  #     p call.to_ruby
+  #   end
+  # end
+end
