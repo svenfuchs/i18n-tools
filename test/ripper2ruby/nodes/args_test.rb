@@ -72,6 +72,26 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
     assert_equal src, call.to_ruby
   end
   
+  define_method :"test method call: t :foo, :bar, :baz (3 symbols, no parantheses)" do
+    src = "t :foo, :bar, :baz"
+  
+    call = call(src)
+    args = call.arguments
+    foo, bar, baz = args.args
+  
+    assert_equal :foo, foo.value
+    assert_equal :bar, bar.value
+    assert_equal :baz, baz.value
+  
+    assert_equal Ruby::Call, args.parent.class
+    assert_equal args, foo.parent
+    assert_equal args, bar.parent
+    assert_equal args, baz.parent
+    
+    assert_equal 2, args.separators.size
+    assert_equal src, call.to_ruby
+  end
+  
   define_method :"test method call: t('foo', 'bar') (two strings)" do
     args = arguments("t('foo', 'bar')")
     assert_equal 'foo', args[0].value
@@ -106,6 +126,7 @@ class RipperRubyBuilderArgsTest < Test::Unit::TestCase
   
   define_method :"test method call: t([:foo, :bar]) (array)" do
     src = "t([:foo, :bar, :baz])"
+
     call = build(src).statements.first
     array = call.arguments.first
   

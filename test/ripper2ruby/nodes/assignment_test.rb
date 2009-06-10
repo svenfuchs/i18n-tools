@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
+class RipperRubyBuilderAssignmentTest < Test::Unit::TestCase
   def build(src)
     Ripper::RubyBuilder.build(src)
   end
@@ -32,6 +32,7 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
   
   define_method :'test assignment: a, b = c, d' do
     src = 'a, b = c, d'
+
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class
 
@@ -44,10 +45,11 @@ class RipperRubyBuilderArgumentsTest < Test::Unit::TestCase
     assert_equal :right, assignment.right.kind
     assert_equal 'c', assignment.right[0].token
     assert_equal 'd', assignment.right[1].token
+
     assert_equal src, assignment.to_ruby
   end
   
-  define_method :'test assignment: a, b = c, d' do
+  define_method :'test assignment: a, b = *c' do
     src = 'a, b = *c'
     assignment = build(src).statements.first
     assert_equal Ruby::Assignment, assignment.class

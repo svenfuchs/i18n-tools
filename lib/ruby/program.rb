@@ -17,8 +17,11 @@ module Ruby
     end
     
     def replace_src(row, column, length, src)
-      @src[line_pos(row) + column, length] = src
-       
+      # puts 'replace with: ' + src + " at: #{[row, column].inspect}, length: #{length}"
+      # puts '', 'before:', @src
+      @src[line_pos(row) + column, length] = src 
+      # puts '', 'after:', @src, ''
+      # puts '-------------------------------------------', ''
       offset_column = src.length - length
       update_positions(row, column + length, offset_column)
     end

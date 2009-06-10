@@ -24,8 +24,9 @@ module Ruby
       key, scope = compute_replacement_keys(search, replacement)
       original_length = length
 
-      args[0] = from_native(key.map { |k| k.to_s }.join('.').to_sym)
-      update_options(:scope, scope) # TODO fix positions!
+      key = key.map { |k| k.to_s }.join('.').to_sym
+      self[0] = from_native(key, args.first.position, args.first.whitespace)
+      update_options(:scope, scope)
 
       root.replace_src(row, column, original_length, to_ruby)
     end

@@ -4,13 +4,16 @@ require 'ruby/composite'
 module Ruby
   class Node
     class << self
-      def from_native(object, position = nil)
-        from_ruby(object.inspect, position)
+      def from_native(object, position = nil, whitespace = nil)
+        from_ruby(object.inspect, position, whitespace)
       end
       
-      def from_ruby(src, position = nil)
+      def from_ruby(src, position = nil, whitespace = nil)
         Ripper::RubyBuilder.new(src).parse.statements.first.tap do |node|
           node.position = position if position
+          node.whitespace = whitespace if whitespace
+          # p whitespace
+          # p node.whitespace
         end
       end
     end
@@ -20,7 +23,7 @@ module Ruby
 
     attr_writer :whitespace
 
-    def initialize(position = nil, whitespace = '')
+    def initialize(position = nil, whitespace = nil)
       self.position = position.dup if position
       self.whitespace = whitespace if whitespace
     end
@@ -110,12 +113,12 @@ module Ruby
     
     protected
     
-      def from_ruby(src)
-        self.class.from_ruby(src)
+      def from_ruby(*args)
+        self.class.from_ruby(*args)
       end
     
-      def from_native(src)
-        self.class.from_native(src)
+      def from_native(*args)
+        self.class.from_native(*args)
       end
 
       def position_from(node, column_offset = 0)

@@ -4,7 +4,7 @@ module Ruby
   class Token < Node 
     attr_accessor :token
 
-    def initialize(token, position = nil, whitespace = '')
+    def initialize(token, position = nil, whitespace = nil)
       self.token = token
       super(position, whitespace)
     end

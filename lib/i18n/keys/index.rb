@@ -59,8 +59,9 @@ module I18n
       def build
         @calls = find_calls
         @calls.each do |call|
-          @keys << call.key unless @keys.include?(call.key)
-          (@by_key[call.key] ||= []) << call # uh, Argument.hash doesn't seem to work??
+          key = call.key.to_sym
+          @keys << key unless @keys.include?(key)
+          (@by_key[key] ||= []) << call # uh, Argument.hash doesn't seem to work??
         end
         @built = true
       end
@@ -110,7 +111,7 @@ module I18n
         memo
       end
 
-      def replace!(call, replacement)
+      def replace_key!(call, replacement)
         replacement = replacement.to_sym
 
         # TODO update @keys as well or remove it
@@ -118,7 +119,7 @@ module I18n
         @by_key[replacement] ||= []
         @by_key[replacement] << call
 
-        call.replace!(replacement)
+        call.replace_key!(replacement)
         save if built?
       end
 

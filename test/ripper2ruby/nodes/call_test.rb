@@ -44,7 +44,7 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     assert_equal src, call.to_ruby
     assert_equal src, call.src
   end
-
+  
   define_method :'test method call: I18n.t("foo") (const target, double-quoted string, parantheses)' do
     src = "I18n.t('foo')"
     program = build(src)
@@ -70,7 +70,7 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     assert_equal 't', call.identifier.token
     assert_equal 'I18n', call.target.token
     assert_equal 'foo', arg.first.value
-  
+
     assert_equal program, call.parent
     assert_equal src, call.root.src
     assert_equal src, call.to_ruby
@@ -131,7 +131,7 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     assert_equal src, call.to_ruby
     assert_equal src, call.src
   end
-
+  
   define_method :"test call on no target without arguments but a block" do
     src = "t do |(a, b), *c|\nfoo\nend"
     program = build(src)
@@ -146,7 +146,7 @@ class RipperRubyBuilderCallsTest < Test::Unit::TestCase
     assert_equal src, call.to_ruby
     assert_equal src, call.src
   end
-
+  
   define_method :"test call on no target with a block var" do
     src = "t(:foo, &block)"
     program = build(src)

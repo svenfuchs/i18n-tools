@@ -28,11 +28,11 @@ class RipperToRubyTranslateCallTest < Test::Unit::TestCase
     assert call.arguments.respond_to?(:key)
   end
   
-  def test_collect_translate_calls
-    src = "I18n.t(:foo); t('bar.baz', :scope => [:buz])"
+  def test_collects_all_three_kinds_of_translate_calls
+    src = "I18n.t(:foo); t('bar.baz', :scope => [:buz]); t :foo"
     builder = I18n::Ripper::RubyBuilder.new(src)
     builder.parse
-    assert_equal 2, builder.translate_calls.size
+    assert_equal 3, builder.translate_calls.size
   end
   
   def test_call_to_translate_call

@@ -4,11 +4,13 @@ module I18n
   module Ripper
     module Collectors
       module TranslateCalls
-        [:on_method_add_arg].each do |method|
+        # [:command, :on_command_call, :on_call, :on_fcall].each do |method|
+        [:on_stmts_add].each do |method|
           self.class_eval <<-eoc
-            def #{method}(*args)
-              call = super
-              collect_translate_call(call.to_translate_call) or call
+            def #{method}(target, statement)
+              super.tap do
+                collect_translate_call(statement.to_translate_call) if statement.is_a?(Ruby::Call)
+              end
             end
           eoc
         end
@@ -26,7 +28,7 @@ module I18n
         def is_translate_call?(call)
           call.identifier.token == 't' &&
           (!call.target.respond_to?(:token) or call.target.token == 'I18n') && 
-          KEY_CLASSES.include?(call.arguments.first.class)
+          call.arguments && KEY_CLASSES.include?(call.arguments.first.class)
         end
       end
     end

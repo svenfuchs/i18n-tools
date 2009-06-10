@@ -32,9 +32,9 @@ class Ripper
         Ruby::MultiAssignment.new(:right, nil, nil, separators, star)
       end
 
-      def on_mrhs_new_from_args(args_list)
-        separators = pop_delims(:@comma).reverse
-        Ruby::MultiAssignment.new(:right, nil, nil, separators, nil, args_list.args)
+      def on_mrhs_new_from_args(args)
+        # separators = pop_delims(:@comma).reverse
+        Ruby::MultiAssignment.new(:right, nil, nil, args.separators, nil, args.args)
       end
 
       def on_mrhs_add(assignment, ref)

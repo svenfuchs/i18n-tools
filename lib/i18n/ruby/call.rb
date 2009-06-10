@@ -4,7 +4,7 @@ module Ruby
   class Call
     def to_translate_call
       meta_class.send(:include, TranslateCall)
-      arguments.to_translate_args_list
+      arguments.to_translate_args_list if arguments
       self
     end
   end

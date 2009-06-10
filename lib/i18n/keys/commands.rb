@@ -33,7 +33,7 @@ command :replace do |c|
     index.each(search.dup, replacement.dup) do |call|
       if I18n::Commands.replace?(call, replacement, :interactive => interactive)
         @found = true
-        index.replace!(call, replacement) 
+        index.replace_key!(call, replacement) 
       end
     end
     

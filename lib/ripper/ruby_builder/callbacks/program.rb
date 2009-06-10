@@ -6,7 +6,8 @@ class Ripper
       end
 
       def on_stmts_add(target, statement)
-        target << statement #.tap { |s| s.parent = target }
+        target << statement
+        target
       end
 
       def on_stmts_new
