@@ -42,14 +42,18 @@ module Ruby
 
         all[key_index(search), search.length] = replacement
         if scope.empty?
-          scope = nil # all.slice!(0, scope.length) 
+          scope = nil
           key = all
         else
-          key = all.slice!(-key.length, key.length)
+          key = all.slice!(-key.length, key.length) # i.e. we preserve the key length, this is debatable
           scope = all.empty? ? nil : all
+          # scope = all.slice!(0, scope.length)     # this would preserve the scope length
+          # key = all                               # comment this in, previous lines out and observe the tests
         end
-
-        # key = all.empty? ? [scope.pop] : all
+        
+        key = [scope.pop] if key.empty?
+        scope = scope.first if scope && scope.size == 1
+        scope = nil if scope && scope.empty?
 
         [key, scope]
       end
