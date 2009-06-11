@@ -103,7 +103,7 @@ module I18n
 
       def each(*keys)
         patterns = key_patterns(keys)
-        calls.each { |call| yield(call) if key_matches?(call.key, patterns) }
+        calls.each { |call| yield(call) if key_matches?(call.full_key(true), patterns) }
       end
 
       def inject(memo, *keys)
@@ -112,6 +112,7 @@ module I18n
       end
 
       def replace_key!(call, search, replacement)
+        search = search.to_s.gsub(/[^\w\.]/, '')
         replacement = replacement.to_sym
 
         # TODO update @keys as well or remove it
@@ -119,10 +120,12 @@ module I18n
         @by_key[key].delete(call) if @by_key[key]
         @by_key.delete(key) if @by_key[key].empty?
 
-        @by_key[replacement] ||= []
-        @by_key[replacement] << call
-
         call.replace_key!(search, replacement)
+
+        key = call.full_key(true)
+        @by_key[key] ||= []
+        @by_key[key] << call
+
         save if built?
       end
 
@@ -146,12 +149,12 @@ module I18n
 
         def parse(file)
           source = File.read(file)
-          # puts source
           parser.new(source, file).tap { |parser| parser.parse }
         end
 
         def key_matches?(subject, key_patterns)
           key_patterns.empty? || key_patterns.any? do |key, pattern|
+            # p "#{subject.to_s} #{pattern.inspect}"
             subject.to_sym == key || subject.to_s =~ pattern
           end
         end

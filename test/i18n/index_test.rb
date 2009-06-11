@@ -94,8 +94,9 @@ class I18nIndexTest < Test::Unit::TestCase
   
   def test_index_inject_with_keys_given_iterates_over_calls_of_given_keys
     index = Keys::Index.new(@project, :pattern => '/**/source_*.{rb}')
-    expected = [:bar, :baaar, :baar, 'bar']
+    expected = [:bar, :baaar, 'bar']
     result = index.inject([], :bar, :baaar, :baar) { |result, call| result << call.key }
+    # :baar is not included because it's scoped "foo.fooo" which doesn't match
     assert_equal expected, result
   end
   

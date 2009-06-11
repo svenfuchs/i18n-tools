@@ -76,8 +76,10 @@ module Ruby
       end
 
       def normalize_keys(*args)
-        args.flatten.map { |k| k.to_s.split(/\./) }.
-             flatten.map { |k| k.to_sym }
+        args.flatten.
+            map { |k| k.to_s.split(/\./) }.flatten.
+            reject { |k| k.empty? }.
+            map { |k| k.to_sym }
       end
   end
 end
