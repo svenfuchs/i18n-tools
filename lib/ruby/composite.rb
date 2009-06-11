@@ -6,6 +6,10 @@ module Ruby
       def initialize(objects = [])
         objects.each { |object| self << object }
       end
+      
+      def detect
+        each { |element| return element if yield(element) }
+      end
 
       def <<(object)
         object = Unsupported.new(object) if object && !object.is_a?(Node)

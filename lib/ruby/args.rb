@@ -8,34 +8,34 @@ module Ruby
       self.args = []
       self.separators = []
     end
+    
+    def <<(arg)
+      # unless arg.is_a?(Node)
+      #   arg = from_native(arg, nil, ' ') 
+      #   separators << from_native(' ,')
+      # end
+      super
+    end
       
     def []=(ix, arg)
+      arg = from_native(arg, nil, self[ix].whitespace) unless arg.is_a?(Node)
       arg.position = self[ix].position
       super
     end
     
     def pop
-      arg = args.pop
-      sep = separators.pop
-      [arg, sep]
+      [args.pop, separators.pop]
     end
     
     def options
       last.is_a?(Ruby::Hash) ? last : nil # TODO fix position!
     end
     
-    def update_options(key, value)
-      if value
-        if options
-          options[key] = from_native(value, nil, ' ') # TODO fix position!
-        else
-          self << from_native(key => value)
-        end
+    def set_option(key, value)
+      if options.nil?
+        self << { key => value } 
       else
-        if options
-          options.delete(key)
-          pop if last.empty?
-        end
+        options[key] = value
       end
     end
     

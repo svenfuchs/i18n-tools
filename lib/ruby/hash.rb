@@ -16,10 +16,15 @@ module Ruby
     end
     
     def []=(key, value)
-      each { |assoc| return assoc.value = value if assoc.key.value == key }
-      self.separators << Token.new(',')
-      self.assocs << Assoc.new(key, value)
-      self[key]
+      value = from_native(value, nil, ' ') unless value.is_a?(Node)
+      if assoc = assocs.detect { |assoc| assoc.key.value == key }
+        assoc.value = value
+      else
+        # TODO never happens, fix positions
+        separators << Token.new(',')
+        assocs << Assoc.new(key, value)
+        self[key]
+      end
     end
     
     def delete(key)

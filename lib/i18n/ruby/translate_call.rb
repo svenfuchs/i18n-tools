@@ -4,20 +4,20 @@ require 'i18n/ruby/translate_args_list'
 
 module Ruby
   module TranslateCall
-    def full_key
-      arguments.full_key
+    def full_key(*args)
+      arguments.full_key(*args)
     end
     
-    def key
-      arguments.key
+    def key(*args)
+      arguments.key(*args)
     end
     
-    def scope
-      arguments.scope
+    def scope(*args)
+      arguments.scope(*args)
     end
     
-    def key_matches?(keys)
-      arguments.key_matches?(keys)
+    def key_matches?(*args)
+      arguments.key_matches?(*args)
     end
     
     def replace_key!(search, replacement)

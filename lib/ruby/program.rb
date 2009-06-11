@@ -20,10 +20,15 @@ module Ruby
       # puts 'replace with: ' + src + " at: #{[row, column].inspect}, length: #{length}"
       # puts '', 'before:', @src
       @src[line_pos(row) + column, length] = src 
+      save_src if filename
       # puts '', 'after:', @src, ''
       # puts '-------------------------------------------', ''
       offset_column = src.length - length
       update_positions(row, column + length, offset_column)
+    end
+    
+    def save_src
+      File.open(filename, 'w+') { |f| f.write(src) }
     end
     
     def nodes

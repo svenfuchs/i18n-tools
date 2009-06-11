@@ -37,7 +37,7 @@ module I18n
         options = args.last.is_a?(Hash) ? args.pop : {}
         self.project = args.shift
         self.name = args.shift || :default
-        
+
         self.pattern = options[:pattern] || @@default_pattern
         self.parser = options[:parser] || @@default_parser
 
@@ -59,7 +59,7 @@ module I18n
       def build
         @calls = find_calls
         @calls.each do |call|
-          key = call.key.to_sym
+          key = call.full_key(true) #.map { |key| key.to_s }.join('.').to_sym
           @keys << key unless @keys.include?(key)
           (@by_key[key] ||= []) << call # uh, Argument.hash doesn't seem to work??
         end
@@ -111,15 +111,18 @@ module I18n
         memo
       end
 
-      def replace_key!(call, replacement)
+      def replace_key!(call, search, replacement)
         replacement = replacement.to_sym
 
         # TODO update @keys as well or remove it
-        @by_key.delete(call.key)
+        key = call.full_key(true)
+        @by_key[key].delete(call) if @by_key[key]
+        @by_key.delete(key) if @by_key[key].empty?
+
         @by_key[replacement] ||= []
         @by_key[replacement] << call
 
-        call.replace_key!(replacement)
+        call.replace_key!(search, replacement)
         save if built?
       end
 
