@@ -1,5 +1,5 @@
 require 'i18n'
-require 'i18n/backend/translation_properties'
+require 'i18n/translation_properties'
 require 'core_ext/object/deep_clone'
 require 'core_ext/hash/iterate_nested'
 require 'core_ext/hash/sorted_yaml_style'
