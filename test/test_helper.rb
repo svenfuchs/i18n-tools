@@ -1,4 +1,5 @@
 $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
+$: << File.expand_path(File.dirname(__FILE__) + '/../vendor/i18n/lib')
 
 require 'ripper/ruby_builder'
 require 'test/unit'

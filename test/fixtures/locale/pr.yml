@@ -1,0 +1,13 @@
+--- 
+pr: 
+  foo: 
+    bar: !str 
+      str: Bah
+      :@filename: test/i18n/../fixtures/locale/pr.yml
+      :@property_names: []
+
+    baz: !str 
+      str: Bas
+      :@filename: test/i18n/../fixtures/locale/pr.yml
+      :@property_names: []
+

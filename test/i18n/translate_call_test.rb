@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'i18n/project'
 
-class RipperToRubyTranslateCallTest < Test::Unit::TestCase
+class I18nTranslateCallTest < Test::Unit::TestCase
   include TestRubyBuilderHelper
 
   def translate_call(src)

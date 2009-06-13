@@ -83,13 +83,3 @@ module Ruby
       end
   end
 end
-
-unless defined?(I18n) && I18n.respond_to?(:normalize_translation_keys) # should be required, eh?
-  module I18n
-    def self.normalize_translation_keys(locale, key, scope)
-      keys = [locale] + Array(scope) + [key]
-      keys = keys.map { |k| k.to_s.split(/\./) }
-      keys.flatten.map { |k| k.to_sym }
-    end
-  end
-end
