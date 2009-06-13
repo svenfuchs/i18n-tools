@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'yaml'
-require 'i18n/keys/index/store'
+require 'i18n/keys/index'
 
 module I18n
   class Project

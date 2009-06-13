@@ -1,5 +1,5 @@
 module I18n
-  module Keys
+  class Keys
     class Index
       module Formatter
         @@verbose = true # remove this class var dependency
@@ -31,7 +31,7 @@ module I18n
           def build(*args)
             puts "indexing files" if verbose?
             super
-            puts "\nfound #{calls.size} occurences of #{keys.size} keys in #{files.size} files" if verbose?
+            puts "\nfound #{calls.size} occurences of #{keys.size} keys in #{files.size} files in total" if verbose?
           end
 
           def save

@@ -1,4 +1,5 @@
 require 'i18n/keys/formatter'
+require 'i18n/keys/index/store'
 require 'i18n/ripper/ruby_builder'
 
 # Index.new(project, :default, :pattern => '/**/*.{rb,erb}').each(:foo, :bar) { |call| ... }
@@ -14,7 +15,7 @@ require 'i18n/ripper/ruby_builder'
 # when keys are given, only occurences of the given keys will be iterated
 
 module I18n
-  module Keys
+  class Keys
     class Index
       include Enumerable
 

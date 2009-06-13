@@ -1,3 +1,4 @@
+require 'ripper/ruby_builder'
 require 'i18n/ripper/collectors/translate_calls'
 
 module I18n

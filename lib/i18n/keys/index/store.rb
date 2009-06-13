@@ -1,7 +1,7 @@
 require 'i18n/keys/index'
 
 module I18n
-  module Keys
+  class Keys
     class Index
       class Store
         attr_reader :project

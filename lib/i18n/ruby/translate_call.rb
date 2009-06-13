@@ -23,5 +23,10 @@ module Ruby
     def replace_key!(search, replacement)
       arguments.replace_key!(search, replacement)
     end
+    
+    def to_s(options)
+      "#{key}: #{filename} [#{row}/#{column}]\n" + 
+      (options[:context] > 0 ? self.context(options.update(:width => options[:context])) : '')
+    end
   end
 end

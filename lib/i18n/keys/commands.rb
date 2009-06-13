@@ -1,6 +1,8 @@
 program :version, I18n::Keys::VERSION
 program :description, 'ruby i18n tools'
- 
+
+# I18n::Commands.announce(self)
+
 command :find do |c|
   c.syntax = 'i18n find [key] --index --verbose'
   c.summary = 'Find keys passed to I18n.t()'
@@ -32,8 +34,8 @@ command :replace do |c|
     index = I18n::Keys.index(:index => options.index)
     index.each(search.dup, replacement.dup) do |call|
       if I18n::Commands.replace?(call, replacement, :interactive => interactive)
-        @found = true
         index.replace_key!(call, search, replacement) 
+        @found = true
       end
     end
     
