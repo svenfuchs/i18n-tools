@@ -36,3 +36,12 @@ If you're using zsh arguments given with a wildcard are expanded to filenames
 before being passed. So <code>i18n-keys find foo.\*</code> won't work. You can
 either use quotes as in <code>i18n-keys find "foo.\*"</code> or turn zsh
 filename generation off with: <code>unsetopt GLOB</code>.
+
+Notes
+_____
+
+If you have Ruby 1.9 installed in parallel to 1.8.x you might want to install
+Thor with the -E option to make the executable wrapper use /usr/bin/env
+instead of hardcoding the path to your Ruby executable. E.g.: 
+
+	sudo gem install wycats-thor -E --source=http://gems.github.com
