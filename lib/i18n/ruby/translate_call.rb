@@ -20,13 +20,13 @@ module Ruby
       arguments.key_matches?(*args)
     end
     
-    def replace_key!(search, replacement)
-      arguments.replace_key!(search, replacement)
+    def replace_key(search, replacement)
+      arguments.replace_key(search, replacement)
     end
     
-    def to_s(options)
+    def to_s(options = {})
       "#{key}: #{filename} [#{row}/#{column}]\n" + 
-      (options[:context] > 0 ? self.context(options.update(:width => options[:context])) : '')
+      (options.has_key?(:context) ? self.context(options.update(:width => options[:context].to_i)) : '')
     end
   end
 end

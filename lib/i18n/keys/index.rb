@@ -1,4 +1,4 @@
-require 'i18n/keys/formatter'
+require 'i18n/keys/index/formatter'
 require 'i18n/keys/index/store'
 require 'i18n/ripper/ruby_builder'
 
@@ -15,7 +15,7 @@ require 'i18n/ripper/ruby_builder'
 # when keys are given, only occurences of the given keys will be iterated
 
 module I18n
-  class Keys
+  module Keys
     class Index
       include Enumerable
 
@@ -112,7 +112,7 @@ module I18n
         memo
       end
 
-      def replace_key!(call, search, replacement)
+      def replace_key(call, search, replacement)
         search = search.to_s.gsub(/[^\w\.]/, '')
         replacement = replacement.to_sym
 
@@ -121,7 +121,7 @@ module I18n
         @by_key[key].delete(call) if @by_key[key]
         @by_key.delete(key) if @by_key[key].empty?
 
-        call.replace_key!(search, replacement)
+        call.replace_key(search, replacement)
 
         key = call.full_key(true)
         @by_key[key] ||= []

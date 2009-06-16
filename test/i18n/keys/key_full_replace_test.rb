@@ -24,7 +24,7 @@ class I18nKeyFullReplaceTest < Test::Unit::TestCase
     calls = []
     index.each(search) do |call|
       calls << call
-      index.replace_key!(call, search, replace)
+      index.replace_key(call, search, replace)
     end
 
     src = root.src.split("\n").join("\n")

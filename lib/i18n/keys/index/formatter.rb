@@ -1,5 +1,5 @@
 module I18n
-  class Keys
+  module Keys
     class Index
       module Formatter
         @@verbose = true # remove this class var dependency

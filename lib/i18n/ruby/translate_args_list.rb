@@ -21,7 +21,7 @@ module Ruby
       keys == full_key[0, keys.length]
     end
 
-    def replace_key!(search, replace)
+    def replace_key(search, replace)
       original_length = length
       self.key, self.scope = compute_replace_keys(search, replace)
       root.replace_src(row, column, original_length, to_ruby)

@@ -2,9 +2,12 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 $: << File.expand_path(File.dirname(__FILE__) + '/../vendor/i18n/lib')
 $: << File.expand_path(File.dirname(__FILE__) + '/../vendor/ripper2ruby/lib')
 
-require 'ripper/ruby_builder'
 require 'test/unit'
 require 'pp'
+
+require 'i18n'
+require 'i18n/keys/commands'
+require 'ripper/ruby_builder'
 
 module TestRubyBuilderHelper
   def sexp(src)
