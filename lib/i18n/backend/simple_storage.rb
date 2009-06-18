@@ -31,11 +31,19 @@ module I18n
         data.each_nested { |key, value| raise KeyExists.new(locale, key) if lookup(locale, key) }
         super
       end
-
-      def remove_translation(keys)
+    
+      def copy_translations(from, to)
         init_translations unless initialized?
-        keys = available_locales.map { |locale| [locale] + keys }
-        translations.delete_nested_if { |key, value| keys.include?(key) } 
+        I18n.available_locales.each do |locale|
+          store_translations(locale, to => I18n.t(from, :raise => true))
+        end
+      end
+
+      def remove_translation(key)
+        init_translations unless initialized?
+        key = I18n.send(:normalize_translation_keys, nil, key, nil)
+        keys = available_locales.map { |locale| [locale] + key }
+        translations.delete_nested_if { |k, v| keys.include?(k) } 
       end
       
       def save_translations(filenames = I18n.load_path.flatten)

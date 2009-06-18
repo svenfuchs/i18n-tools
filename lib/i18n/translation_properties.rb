@@ -23,7 +23,9 @@ module I18n
     end
     
     def unset_properties
-      TranslationProperties.property_names.each { |name| remove_instance_variable("@#{name}") }
+      TranslationProperties.property_names.each do |name| 
+        remove_instance_variable("@#{name}") rescue NameError
+      end
     end
   end
 end

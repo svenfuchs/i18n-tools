@@ -27,8 +27,8 @@ module I18n
       
         def is_translate_call?(call)
           call.identifier.token == 't' &&
-          (!call.target.respond_to?(:token) or call.target.token == 'I18n') && 
-          call.arguments && KEY_CLASSES.include?(call.arguments.first.class)
+          (!call.target.respond_to?(:token) || call.target.token == 'I18n') && 
+          call.arguments && KEY_CLASSES.include?(call.arguments.first.arg.class)
         end
       end
     end

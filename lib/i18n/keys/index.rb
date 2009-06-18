@@ -1,6 +1,7 @@
 require 'i18n/keys/index/formatter'
 require 'i18n/keys/index/store'
 require 'i18n/ripper/ruby_builder'
+require 'erb/stripper'
 
 # Index.new(project, :default, :pattern => '/**/*.{rb,erb}').each(:foo, :bar) { |call| ... }
 #
@@ -20,7 +21,7 @@ module I18n
       include Enumerable
 
       @@formatter = Formatter::Stdin
-      @@default_pattern = '/**/*.{rb,erb}'
+      @@default_pattern = '**/*.{rb,erb}'
       @@default_parser = I18n::Ripper::RubyBuilder
 
       attr_accessor :project, :name, :parser, :pattern
@@ -91,7 +92,7 @@ module I18n
       end
 
       def files
-        Dir[project.root_dir + pattern]
+        Dir[project.root_dir + '/' + pattern]
       end
 
       def pattern
@@ -118,6 +119,7 @@ module I18n
 
         # TODO update @keys as well or remove it
         key = call.full_key(true)
+
         @by_key[key].delete(call) if @by_key[key]
         @by_key.delete(key) if @by_key[key].empty?
 
@@ -150,7 +152,9 @@ module I18n
 
         def parse(file)
           source = File.read(file)
-          parser.new(source, file).tap { |parser| parser.parse }
+          source = Erb::Stripper.new.to_ruby(source) if File.extname(file) == '.erb'
+
+          parser.new(source, file).tap { |p| p.parse }
         end
 
         def key_matches?(subject, key_patterns)

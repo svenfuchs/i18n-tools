@@ -13,7 +13,7 @@ class I18nTranslateCallTest < Test::Unit::TestCase
   end
 
   define_method :"test: to_translate_call includes TranslateCall to the meta class" do
-    call = call('t(:foo)')
+    call = build('t(:foo)').first
     assert !call.respond_to?(:key)
   
     call = call.to_translate_call
@@ -21,7 +21,7 @@ class I18nTranslateCallTest < Test::Unit::TestCase
   end
   
   define_method :"test: to_translate_call includes TranslateArgsList to the arguments' meta class" do
-    call = call('t(:foo)')
+    call = build('t(:foo)').first
     assert !call.arguments.respond_to?(:key)
   
     call = call.to_translate_call
@@ -65,7 +65,7 @@ class I18nTranslateCallTest < Test::Unit::TestCase
     assert_equal [:foo, :bar, :baz], translate_call("t(:baz, :scope => :'foo.bar')").full_key
     assert_equal [:foo, :bar, :baz], translate_call("t(:baz, :scope => [:foo, :bar])").full_key
   end
-  
+
   def test_translate_call_key_matches?
     assert translate_call("t(:foo)").key_matches?(:foo)
   
@@ -84,17 +84,17 @@ class I18nTranslateCallTest < Test::Unit::TestCase
   
     assert !translate_call("t(:baz, :scope => [:foo, :bar])").key_matches?(:'bar.baz')
   end
-
+  
   def test_translate_call_key_index
     assert_equal 0, translate_args("t(:foo)").key_index([:foo])
     assert_equal 0, translate_args("t(:'foo.bar.baz')").key_index([:foo, :bar, :baz])
     assert_equal 0, translate_args("t(:'baz.buz', :scope => [:foo, :bar])").key_index([:foo])
     assert_equal 0, translate_args("t(:'baz.buz', :scope => [:foo, :bar])").key_index([:foo, :bar, :baz, :buz])
-
+  
     assert_equal 1, translate_args("t(:'foo.bar.baz')").key_index([:bar, :baz])
     assert_equal 1, translate_args("t(:'baz.buz', :scope => [:foo, :bar])").key_index([:bar])
     assert_equal 1, translate_args("t(:'baz.buz', :scope => [:foo, :bar])").key_index([:bar, :baz, :buz])
-
+  
     assert_equal nil, translate_args("t(:'foo.bar.baz')").key_index([:baz, :buz])
     assert_equal nil, translate_args("t(:'baz.buz', :scope => [:foo, :bar])").key_index([:buz, :bar])
   end

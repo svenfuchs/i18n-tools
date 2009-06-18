@@ -38,10 +38,24 @@ module I18n
       @indices ||= Keys::Index::Store.new(self)
     end
     
+    def backend
+      @backend ||= I18n.backend = I18n::Backend::SimpleStorage.new
+    end
+    
     def keys(*args)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-      name = options.delete(:index) # args.first || 
-      indices.load_or_create_or_init(name, options) #.find(*args)
+      @index ||= begin
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        name = options.delete(:index) 
+        indices.load_or_create_or_init(name, options)
+      end
+    end
+    
+    def replace_key(index, call, search, replace)
+      key = search.gsub(/^\*\.|\.\*$/, '')
+      backend.copy_translations(key, replace)
+      index.replace_key(call, search, replace)
+      backend.remove_translation(key) # unless index.count(search) > 0
+      backend.save_translations
     end
   end
 end

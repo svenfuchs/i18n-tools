@@ -2,7 +2,7 @@ class Foo
   def foo
     t(:bar)
     t(:"baaar")
-    t(:'baar', :scope => ['foo', :fooo], :default => 'bla')
+    t(:baar, :scope => [:baz, :fooo], :default => 'bla')
     t(:'foo.bar')
     t("bar")
     t('bar_1')

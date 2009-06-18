@@ -13,7 +13,7 @@ module Ruby
     end
 
     def scope
-      last.is_a?(Ruby::Hash) ? last.value[:scope] : nil
+      last.arg.is_a?(Ruby::Hash) ? last.arg.value[:scope] : nil
     end
 
     def key_matches?(keys)
@@ -38,7 +38,7 @@ module Ruby
           set_option(:scope, scope)
         elsif options
           options.delete(:scope)
-          pop if options.empty?
+          pop if options.arg.empty?
         end
       end
 

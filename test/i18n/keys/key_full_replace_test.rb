@@ -28,7 +28,7 @@ class I18nKeyFullReplaceTest < Test::Unit::TestCase
     end
 
     src = root.src.split("\n").join("\n")
-    # puts '----------------', src
+
     search.to_s.gsub(/[^\w\.]/, '').split('.').each { |key| assert src.scan(key.to_s).empty? unless key.empty? }
     replace.to_s.gsub(/[^\w\.]/, '').split('.').each { |key| assert src.scan(key.to_s).size == calls.size }
 
@@ -39,25 +39,25 @@ class I18nKeyFullReplaceTest < Test::Unit::TestCase
   define_method :"test subsequent key replacements in: t(:foo)" do
     2.times do
       index = index('single_key.rb')
-      assert_key_replacements(index, :foo, :'fuh.bah')
-      assert_key_replacements(index, '*.bah', :foo)
-      assert_key_replacements(index, 'fuh.*', '')
+      assert_key_replacements(index, :foo, :'fuh.bah') and putc '.'
+      assert_key_replacements(index, '*.bah', :foo)    and putc '.'
+      assert_key_replacements(index, 'fuh.*', '')      and putc '.'
     end
   end
-
+  
   define_method :"test subsequent key replacements in: t(:bar, :scope => :foo)" do
     2.times do
       index = index('single_scope.rb')
-      assert_key_replacements(index, :'*.bar', :'bah.bas')
-      assert_key_replacements(index, :'*.bah.bas', :'bar')
+      assert_key_replacements(index, :'*.bar', :'bah.bas') and putc '.'
+      assert_key_replacements(index, :'*.bah.bas', :'bar') and putc '.'
     end
   end
   
   define_method :"test subsequent key replacements in: t(:'bar.baz', :scope => :foo)" do
     2.times do
       index = index('double_key.rb')
-      assert_key_replacements(index, :'foo.bar.baz', :'fuh.bah.bas.bus')
-      assert_key_replacements(index, :'fuh.bah.bas.bus', :'foo.bar.baz')
+      assert_key_replacements(index, :'foo.bar.baz', :'fuh.bah.bas.bus') and putc '.'
+      assert_key_replacements(index, :'fuh.bah.bas.bus', :'foo.bar.baz') and putc '.'
     end
   end
   

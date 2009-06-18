@@ -21,9 +21,9 @@ class I18nIndexTest < Test::Unit::TestCase
   end
 
   def test_index_default_pattern
-    assert_equal '/**/*.{rb,erb}', Keys::Index.new(@project).pattern
+    assert_equal '**/*.{rb,erb}', Keys::Index.new(@project).pattern
   end
-
+  
   def test_index_finds_files
     expected = @filenames.map { |p| File.expand_path(p) }
     assert_equal expected, Keys::Index.new(@project).files & expected
@@ -79,7 +79,7 @@ class I18nIndexTest < Test::Unit::TestCase
   end
   
   def test_index_exists_is_true_when_index_directory_exists
-    index = @project.indices.create('foo')
+    index = @project.indices.create('foo', :pattern => 'template.html.erb')
     assert index.exists?
     FileUtils.rm_r(index.filename)
     assert !index.exists?
@@ -141,5 +141,5 @@ class I18nIndexTest < Test::Unit::TestCase
   # TODO
   # - output feedback on replace when --verbose is on
   # - update the yaml/rb files
-  
+     
 end
