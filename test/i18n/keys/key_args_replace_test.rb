@@ -22,9 +22,8 @@ class I18nArgsKeyReplaceTest < Test::Unit::TestCase
   
     @args.replace_key(:bar, :oooooooo)
   
-    assert_equal [2, 1], @args.position
+    assert_equal [2, 1], @args.position.to_a
     assert_equal 11, @args.length
-    assert_equal 5, @args.src_pos
   
     assert_equal '(:oooooooo)', @args.to_ruby
     assert_equal '(:oooooooo)', @args.src

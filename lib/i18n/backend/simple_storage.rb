@@ -12,26 +12,31 @@ module I18n
       super "key exists: (#{locale}) :#{key.join('.')}"
     end
   end
-  
+
   module Backend
     class SimpleStorage < Simple
       @@sort_keys = true
-      
+
       class << self
         def sort_keys
           @@sort_keys
         end
-        
+
         def sort_keys=(sort_keys)
           @@sort_keys = sort_keys
         end
       end
-      
+
+      def interpolate(locale, original, values = {})
+        return original unless original.is_a?(String)
+        super.tap { |string| set_translation_properties(string, original.properties) }
+      end
+
       def store_translations(locale, data)
         data.each_nested { |key, value| raise KeyExists.new(locale, key) if lookup(locale, key) }
         super
       end
-    
+
       def copy_translations(from, to)
         init_translations unless initialized?
         I18n.available_locales.each do |locale|
@@ -43,19 +48,19 @@ module I18n
         init_translations unless initialized?
         key = I18n.send(:normalize_translation_keys, nil, key, nil)
         keys = available_locales.map { |locale| [locale] + key }
-        translations.delete_nested_if { |k, v| keys.include?(k) } 
+        translations.delete_nested_if { |k, v| keys.include?(k) }
       end
-      
+
       def save_translations(filenames = I18n.load_path.flatten)
         Array(filenames).each do |filename|
           save_file(filename, by_filename(filename))
         end
       end
-    
+
       protected
 
         def load_yml(filename)
-          YAML::load(IO.read(filename)).tap do |data| 
+          YAML::load(IO.read(filename)).tap do |data|
             set_translation_properties(data, :filename => filename) if data
           end
         end
@@ -68,7 +73,7 @@ module I18n
           init_translations unless initialized?
           translations.select_nested(&block)
         end
-      
+
         def each_translation(&block)
           init_translations unless initialized?
           translations.each_nested { |keys, t| block.call(keys.first, keys[1..-1], t) }
@@ -83,23 +88,31 @@ module I18n
         def save_yml(filename, data)
           data = unset_translation_properties(data.deep_clone)
           data = deep_stringify_keys(data)
-          File.open(filename, 'w+') do |f| 
+          File.open(filename, 'w+') do |f|
             data.set_yaml_style(:sorted) if self.class.sort_keys
             f.write(data.to_yaml)
           end
         end
 
-        def set_translation_properties(data, properties)
-          data.each_nested do |key, value|
+        def set_translation_properties(value, properties)
+          case value
+          when Hash
+            value.each_nested { |key, value| set_translation_properties(value, properties) }
+          else
             value.meta_class.send(:include, TranslationProperties) unless value.respond_to?(:property_names)
             value.set_properties(properties)
-          end and data
+          end
         end
 
-        def unset_translation_properties(data)
-          data.each_nested { |keys, value| value.unset_properties }
+        def unset_translation_properties(value)
+          case value
+          when Hash
+            value.each_nested { |key, value| value.unset_properties }
+          else
+            value.unset_properties
+          end
         end
-      
+
         # Return a new hash with all keys and nested keys converted to strings.
         def deep_stringify_keys(hash)
           hash.inject({}) { |result, (key, value)|
