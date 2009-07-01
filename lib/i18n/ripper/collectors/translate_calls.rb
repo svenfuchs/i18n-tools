@@ -1,4 +1,5 @@
 require 'i18n/ruby/translate_call'
+require 'pp'
 
 module I18n
   module Ripper
@@ -26,7 +27,7 @@ module I18n
         KEY_CLASSES = [Ruby::Symbol, Ruby::DynaSymbol, Ruby::String, Ruby::Array]
       
         def is_translate_call?(call)
-          call.identifier.token == 't' &&
+          call.identifier.try(:token) == 't' &&
           (!call.target.respond_to?(:token) || call.target.token == 'I18n') && 
           call.arguments && KEY_CLASSES.include?(call.arguments.first.arg.class)
         end
