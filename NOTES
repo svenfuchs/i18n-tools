@@ -1,0 +1,73 @@
+key index
+	maps foo.bar.baz to file1, file2, file3
+	holds all calls
+	iterates over all calls matching a key pattern
+	could be faster by being able to look up calls by key pattern (i.e. sql regex)
+	
+Index currently mashals full Call instances. Maybe better do something like:
+
+class Index
+	def find_calls_by_pattern(pattern)
+		keys.map do |key, files|
+			fetch_calls(files) if key.matches?(pattern)
+		end.flatten.compact
+	end
+
+	def fetch_calls(files)
+		files.map do |file|
+			file.positions.map { |position| file.code.select(:position => position) }
+		end
+	end
+	
+	class File
+		attr_reader :name
+		
+		def positions
+			@positions ||= []
+		end
+		
+		def code
+			Ripper::RubyBuilder.build(nil, name)
+		end
+	end
+end
+
+This way the index only holds references to keys, filenames and positions. 
+Thus it could also easily be stored in a database.
+
+Also, iterating over calls shouldn't necessarily require to load all calls to
+memory at once. It can only load one call after another.
+
+while call = index.find_by_key(pattern)
+	call.replace_key(...)
+end
+
+class Index
+	def find_by_key(pattern)
+		key = data.detect { |key, data| key.matches?(pattern) }
+		source = self[key][:sources].first
+		source.code.select(:position => source.positions.first)
+	end
+	
+	class Source
+		attr_reader :filename
+		
+		def positions
+			@positions ||= []
+		end
+		
+		def code
+			Ripper::RubyBuilder.build(nil, filename)
+		end
+	end
+end
+
+index.data = {
+	:'foo.bar.baz' => {
+		:stores => ['path/to/de.yml']
+		:sources => [
+			:filename => 'path/to/code.rb',
+			:positions => [[0, 0], [1, 1]]
+		]
+	}
+}

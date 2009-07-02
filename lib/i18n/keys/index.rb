@@ -117,11 +117,10 @@ module I18n
         search = search.to_s.gsub(/[^\w\.]/, '')
         replacement = replacement.to_sym
 
-        # TODO update @keys as well or remove it
-        key = call.full_key(true)
+        key = Key.new(call.full_key(true))
 
-        @by_key[key].delete(call) if @by_key[key]
-        @by_key.delete(key) if @by_key[key].empty?
+        data[key].delete(call)
+        data.delete(key) if data[key].empty?
 
         call.replace_key(search, replacement)
 
