@@ -7,13 +7,13 @@ class I18nCallReplaceTest < Test::Unit::TestCase
   end
 
   def teardown
-    @index.send(:files).each { |file| FileUtils.mv("#{file}.backup", file) } if @index
+    @index.filenames.each { |file| FileUtils.mv("#{file}.backup", file) } if @index
     @index.delete
   end
 
   def index(file)
     @index ||= I18n::Index.load_or_create(:root_dir => @root_dir, :pattern => '/translate/' + file).tap do |index|
-      index.files.each { |file| FileUtils.cp(file, "#{file}.backup") }
+      index.filenames.each { |file| FileUtils.cp(file, "#{file}.backup") }
     end
   end
 

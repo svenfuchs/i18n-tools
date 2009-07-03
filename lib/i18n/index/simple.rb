@@ -15,7 +15,7 @@ module I18n
 
         options[:format].setup(self) if options[:format]
       end
-      
+
     	def find_call(*keys)
     		return unless key = data.keys.detect { |key, data| key.matches?(*keys) }
     		occurence = data.occurences(key).first
@@ -26,7 +26,7 @@ module I18n
     	def find_calls(*keys)
     		keys = data.keys.select { |key, data| key.matches?(*keys) }
     		occurences = keys.map { |key| data.occurences(key) }.flatten
-    		occurences.map do |occurence| 
+    		occurences.map do |occurence|
     		  Index.ruby(occurence.filename).select(Ruby::Call, :position => occurence.position)
   		  end.flatten
     	end
@@ -34,36 +34,36 @@ module I18n
       def replace_key(call, search, replacement)
         data.remove(call)
         call.replace_key(search.to_s.gsub(/[^\w\.]/, ''), replacement.to_sym)
-        File.open(call.root.filename, 'w+') { |f| f.write(call.root.src) }
+        save_source(call.filename, call.root.src)
         data.add(call)
         save if built?
       end
-      
+
       def data
         @data ||= Data.new
         build unless built?
         @data
       end
-      
+
       def keys
         data.keys
       end
-      
+
       def occurences
         data.values.map { |value| value[:occurences] }.flatten
       end
 
-      def files
+      def filenames
         Dir[root_dir + '/' + pattern]
       end
 
       protected
-      
+
         def reset!
           @built = false
           @data = nil
         end
-    
+
         def built?
           @built
         end
@@ -71,10 +71,14 @@ module I18n
         def build
           reset!
           @built = true
-          calls = files.inject([]) do |result, file| 
-            result += Index.calls(file)
-          end
+          calls = filenames.map { |filename| Index.calls(filename) }.flatten
           calls.each { |call| data.add(call) }
+        end
+
+        def save_source(filename, data)
+          files = Index.files(filename)
+          files.data = data
+          files.save
         end
   	end
   end

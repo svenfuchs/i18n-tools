@@ -28,9 +28,9 @@ module I18n
           attr_accessor :format
           
           def build(*args)
-            format.out "indexing files\n"
+            format.out "indexing files ... "
             super
-            format.out "\nfound #{occurences.size} occurences of #{keys.size} keys in #{files.size} files in total\n"
+            format.out "found #{occurences.size} occurences of #{keys.size} keys in #{filenames.size} files in total\n"
           end
 
           def save
@@ -39,7 +39,7 @@ module I18n
           end
 
           def parse(file)
-            # puts "  parsing #{File.expand_path(file)}"
+            # puts "  parsing #{::File.expand_path(file)}"
             format.out '.'
             super
           end

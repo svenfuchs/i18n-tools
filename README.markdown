@@ -1,8 +1,6 @@
 I18n Tools
 ==========
 
-README is currently out of date. 
-
 Tools useful for working with Ruby/Rails I18n. Currently contains only the 
 source parser tool.
 
@@ -11,6 +9,19 @@ I18n Keys Source Parser
 
 (You can always have a look at thor -T for the current list of available Thor 
 commands.)
+
+**Requirements**
+
+You need to use Ruby 1.9 because we depend on Ripper2Ruby which requires Ripper.
+If you happen to know a way to compile/use Ripper for Ruby 1.8.x please let me
+know.
+
+Also, the library currently expects to find the gems I18n and Ripper2Ruby 
+frozen to vendor/.
+
+You also need Thor to use the command line tool. You might experience problems 
+getting Thor to behave under Ruby 1.9. Please let me know when I can remove 
+this notice ;)
 
 **Usage**
 
@@ -34,15 +45,25 @@ commands.)
 		an index will be built. On subsequent usages the existing index will
 		be used (largely speeding up the command).
 		
+	--dir
+		Root directory where files matching the pattern are searched for. If you
+		use a saved index this is also the directory where a .i18n/ directory
+		will be created for the index file.
+		
+	--pattern
+		Glob pattern that is used to find
+		
 	--context
 		Output the given number of lines of context before and after occurences.
 
 	--verbose
-		Output additional information (e.g. while index being built).
+		Output additional information (e.g. while index being built). (Currently
+		not supported)
 	
 **Examples**
 
 	thor i18n:keys:find foo.* --index --dir=path/to/project --pattern=**/*.{rb,erb} --context=2
+	thor i18n:keys:find foo.* bar --index --dir=path/to/project --pattern=**/*.{rb,erb} --context=2
 	
 	
 If you're using zsh arguments given with a wildcard are expanded to filenames

@@ -5,12 +5,34 @@ require 'i18n/index/occurence'
 require 'i18n/index/format'
 require 'i18n/ripper2ruby'
 
+# TODO move the state to an Index::Base class
+
 module I18n
   module Index
     @@implementation = I18n::Index::Simple
     @@parser = I18n::Ripper::RubyBuilder
     @@default_pattern = '**/*.{rb,erb}'
-  
+
+    @@files = {}
+    @@calls = {}
+    @@ruby  = {}
+
+  	class File
+  	  attr_accessor :path, :data
+
+  	  def initialize(path)
+  	    self.path = path
+	    end
+
+	    def read
+	      @data ||= ::File.read(path)
+      end
+
+	    def save
+        ::File.open(path, 'w+') { |f| f.write(data) }
+      end
+	  end
+
     class << self
       def implementation
         @@implementation
@@ -19,32 +41,34 @@ module I18n
       def implementation=(implementation)
         @@implementation = implementation
       end
-      
+
       def ruby(filename)
-        parser(filename).parse
+        @@ruby[filename] ||= parser(filename).parse
       end
-      
+
       def calls(filename)
-        parser(filename).tap { |p| p.parse }.translate_calls
+        @@calls[filename] ||= parser(filename).tap { |p| p.parse }.translate_calls
       end
-      
+
       def parser(filename)
-        @@parser.new(source(filename), filename)
+        source = files(filename).read
+        source = filter(source, filename)
+        @@parser.new(source, filename)
       end
-      
-      def source(filename)
-        filter(File.read(filename), filename)
-      end
-      
+
       def filter(source, filename)
-        source = Erb::Stripper.new.to_ruby(source) if File.extname(filename) == '.erb' # TODO make this configurable
+        source = Erb::Stripper.new.to_ruby(source) if ::File.extname(filename) == '.erb' # TODO make this configurable
         source
+      end
+
+      def files(filename)
+        @@files[filename] ||= File.new(filename)
       end
 
       def parser=(parser)
         @@parser = parser
       end
-    
+
       def default_pattern
         @@default_pattern
       end
@@ -52,11 +76,11 @@ module I18n
       def default_pattern=(default_pattern)
         @@default_pattern = default_pattern
       end
-      
+
       def new(*args)
         @@implementation.new(*args)
       end
-      
+
       def load_or_create(*args)
         @@implementation.load_or_create(*args)
       end

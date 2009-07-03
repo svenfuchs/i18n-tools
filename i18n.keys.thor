@@ -2,6 +2,7 @@
 $:.unshift File.expand_path(File.dirname(__FILE__) + '/lib')
 $:.unshift File.expand_path(File.dirname(__FILE__) + '/vendor/ripper2ruby/lib')
 
+require 'core_ext/hash/symbolize_keys'
 require 'i18n/commands/keys'
 require 'thor'
 
@@ -31,9 +32,9 @@ module I18n
     protected
     
       def normalize(options)
-        options = Hash[*options.to_a] # i can haz hash
+        options = Hash[options.to_a] # i can haz hash
         options[:root_dir] = options.delete(:dir)
-        options
+        options.symbolize_keys
       end
   end
 end

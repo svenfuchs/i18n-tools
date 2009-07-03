@@ -46,9 +46,10 @@ module I18n
         end
 
         def index(options) # TODO use context + verbose options
+          method = options.delete(:index) ? :load_or_create : :new
           options = options.slice(:root_dir, :pattern, :format, :context)
           options[:format] ||= I18n::Index::Format::Stdout.new(@out)
-          options[:save] ? I18n::Index.load_or_create(options) : I18n::Index.new(options)
+          I18n::Index.send(method, options)
         end
         
         def cancelled?

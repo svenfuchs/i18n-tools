@@ -24,11 +24,11 @@ module I18n
             end
 
             def load(options)
-              File.open(filename(options), 'r') { |f| ::Marshal.load(f) }
+              ::File.open(filename(options), 'r') { |f| ::Marshal.load(f) }
             end
 
             def exists?(options)
-              File.exists?(filename(options))
+              ::File.exists?(filename(options))
             end
 
             def filename(options)
@@ -37,13 +37,13 @@ module I18n
 
             def store_dir(options)
               root_dir = options[:root_dir] || Dir.pwd
-              File.expand_path(root_dir + '/.i18n')
+              ::File.expand_path(root_dir + '/.i18n')
             end
         end
       end
 
       def exists?
-        File.exists?(filename)
+        ::File.exists?(filename)
       end
 
       def update
@@ -54,7 +54,7 @@ module I18n
 
       def save
         mkdir
-        File.open(filename, 'w+') { |f| ::Marshal.dump(self, f) }
+        ::File.open(filename, 'w+') { |f| ::Marshal.dump(self, f) }
       end
 
       def delete
@@ -70,7 +70,7 @@ module I18n
       end
       
       def mkdir
-        FileUtils.mkdir_p(store_dir) unless File.exists?(store_dir)
+        FileUtils.mkdir_p(store_dir) unless ::File.exists?(store_dir)
       end
 
       def marshal_dump
