@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
     'bin/i18n-keys',
     'lib/ansi.rb',
     'lib/i18n/keys/commands.rb',
-    'lib/i18n/keys/formatter.rb',
+    'lib/i18n/keys/format.rb',
     'lib/i18n/keys/index.rb',
     'lib/i18n/keys/call.rb',
     'lib/i18n/keys.rb',

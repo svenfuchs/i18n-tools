@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-require 'i18n/project'
 
 class I18nTranslateCallTest < Test::Unit::TestCase
   include TestRubyBuilderHelper

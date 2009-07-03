@@ -1,18 +1,11 @@
 require 'i18n'
+require 'i18n/exceptions/key_exists'
 require 'i18n/translation_properties'
 require 'core_ext/object/deep_clone'
 require 'core_ext/hash/iterate_nested'
 require 'core_ext/hash/sorted_yaml_style'
 
 module I18n
-  class KeyExists < ArgumentError
-    attr_reader :locale, :key
-    def initialize(locale, key)
-      @key, @locale = key, locale
-      super "key exists: (#{locale}) :#{key.join('.')}"
-    end
-  end
-
   module Backend
     class SimpleStorage < Simple
       @@sort_keys = true

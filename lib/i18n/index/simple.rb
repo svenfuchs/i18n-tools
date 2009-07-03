@@ -1,7 +1,6 @@
 require 'i18n/index/simple/building'
 require 'i18n/index/simple/storage'
 require 'i18n/index/simple/data'
-require 'i18n/index/simple/formatter'
 
 module I18n
   module Index
@@ -15,7 +14,7 @@ module I18n
         self.root_dir = options[:root_dir] || Dir.pwd
         self.pattern = options[:pattern] || Index.default_pattern
 
-        options[:formatter].setup(self) if options[:formatter]
+        options[:format].setup(self) if options[:format]
       end
 
       def data
@@ -25,17 +24,23 @@ module I18n
       end
       
       def keys
-        @data.keys
+        data.keys
       end
       
       def occurences
-        @data.values.map { |value| value[:occurences] }.flatten
+        data.values.map { |value| value[:occurences] }.flatten
       end
 
     	def find_call(*keys)
     		return unless key = data.keys.detect { |key, data| key.matches?(*keys) }
     		occurence = data.occurences(key).first
     		occurence.code.select(Ruby::Call, :position => occurence.position).first
+    	end
+
+    	def find_calls(*keys)
+    		keys = data.keys.select { |key, data| key.matches?(*keys) }
+    		occurences = keys.map { |key| data.occurences(key) }.flatten
+    		occurences.map { |occurence| occurence.code.select(Ruby::Call, :position => occurence.position) }.flatten
     	end
 
       def replace_key(call, search, replacement)

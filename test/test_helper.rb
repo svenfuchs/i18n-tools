@@ -6,7 +6,7 @@ require 'test/unit'
 require 'pp'
 
 require 'i18n'
-require 'i18n/keys/commands'
+require 'i18n/commands/keys'
 require 'ripper/ruby_builder'
 
 module TestRubyBuilderHelper

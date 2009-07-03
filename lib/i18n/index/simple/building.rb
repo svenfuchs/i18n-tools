@@ -1,5 +1,3 @@
-require 'i18n/keys/index'
-
 module I18n
   module Index
     class Simple

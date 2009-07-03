@@ -1,5 +1,3 @@
-require 'i18n/keys/index'
-
 module I18n
   module Index
     class Simple
@@ -42,7 +40,8 @@ module I18n
             end
 
             def store_dir(options)
-              File.expand_path(options[:root_dir] + '/.i18n')
+              root_dir = options[:root_dir] || Dir.pwd
+              File.expand_path(root_dir + '/.i18n')
             end
         end
       end
