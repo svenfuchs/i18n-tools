@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-require 'fileutils'
 require 'i18n/backend/simple_storage'
 
 class I18nCommandsKeysTest < Test::Unit::TestCase

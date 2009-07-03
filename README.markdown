@@ -9,11 +9,14 @@ source parser tool.
 I18n Keys Source Parser
 -----------------------
 
+(You can always have a look at thor -T for the current list of available Thor 
+commands.)
+
 **Usage**
 
-	i18n-keys [cmd] [key_pattern] [options]
-	i18n-keys find foo.bar.* --index  --verbose
-	
+	thor i18n:keys:find KEYS [--index] [--dir=DIR] [--pattern=PATTERN] [--context=N] 
+	thor i18n:keys:find SEARCH REPLACE [--index] [--dir=DIR] [--pattern=PATTERN] [--context=N] [--verbose]
+
 **Key Pattern**	
 
 	foo   - finds all calls to I18n.t with the key 'foo'
@@ -30,9 +33,17 @@ I18n Keys Source Parser
 		Build and/or use an index. When you use --index for the first time
 		an index will be built. On subsequent usages the existing index will
 		be used (largely speeding up the command).
+		
+	--context
+		Output the given number of lines of context before and after occurences.
 
 	--verbose
 		Output additional information (e.g. while index being built).
+	
+**Examples**
+
+	thor i18n:keys:find foo.* --index --dir=path/to/project --pattern=**/*.{rb,erb} --context=2
+	
 	
 If you're using zsh arguments given with a wildcard are expanded to filenames
 before being passed. So <code>i18n-keys find foo.\*</code> won't work. You can

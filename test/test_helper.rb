@@ -3,6 +3,7 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../vendor/i18n/lib')
 $: << File.expand_path(File.dirname(__FILE__) + '/../vendor/ripper2ruby/lib')
 
 require 'test/unit'
+require 'fileutils'
 require 'pp'
 
 require 'i18n'

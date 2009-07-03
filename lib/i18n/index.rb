@@ -1,4 +1,4 @@
-require 'i18n/exceptions'
+require 'i18n/exceptions/key_exists'
 require 'i18n/index/simple'
 require 'i18n/index/key'
 require 'i18n/index/occurence'
@@ -20,8 +20,25 @@ module I18n
         @@implementation = implementation
       end
       
-      def parser
-        @@parser
+      def ruby(filename)
+        parser(filename).parse
+      end
+      
+      def calls(filename)
+        parser(filename).tap { |p| p.parse }.translate_calls
+      end
+      
+      def parser(filename)
+        @@parser.new(source(filename), filename)
+      end
+      
+      def source(filename)
+        filter(File.read(filename), filename)
+      end
+      
+      def filter(source, filename)
+        source = Erb::Stripper.new.to_ruby(source) if File.extname(filename) == '.erb' # TODO make this configurable
+        source
       end
 
       def parser=(parser)

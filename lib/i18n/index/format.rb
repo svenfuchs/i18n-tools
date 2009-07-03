@@ -13,7 +13,7 @@ module I18n
         end
         
         def out(str)
-          io.puts(str)
+          io.print(str)
         end
 
         def setup(target)
@@ -28,13 +28,13 @@ module I18n
           attr_accessor :format
           
           def build(*args)
-            format.out "indexing files"
+            format.out "indexing files\n"
             super
-            format.out "\nfound #{occurences.size} occurences of #{keys.size} keys in #{files.size} files in total"
+            format.out "\nfound #{occurences.size} occurences of #{keys.size} keys in #{files.size} files in total\n"
           end
 
           def save
-            format.out "saving index"
+            format.out "saving index\n"
             super
           end
 
