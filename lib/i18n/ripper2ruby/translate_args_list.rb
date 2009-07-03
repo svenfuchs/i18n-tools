@@ -1,7 +1,11 @@
-require 'ruby/call'
-require 'i18n/ruby/call'
-
 module Ruby
+  class ArgsList
+    def to_translate_args_list
+      meta_class.send(:include, TranslateArgsList)
+      self
+    end
+  end
+
   module TranslateArgsList
     def full_key(joined = false)
       full_key = normalize_keys(scope, key)
@@ -28,11 +32,11 @@ module Ruby
     end
 
     protected
-    
+
       def key=(key)
         self[0] = key
       end
-    
+
       def scope=(scope)
         if scope
           set_option(:scope, scope)
@@ -59,7 +63,7 @@ module Ruby
           # scope = all.slice!(0, scope.length)     # this would preserve the scope length
           # key = all                               # comment this in, previous lines out and observe the tests
         end
-        
+
         key = [scope.pop] if key.empty?
         scope = scope.first if scope && scope.size == 1
         scope = nil if scope && scope.empty?
@@ -70,7 +74,7 @@ module Ruby
       def key_index(search)
         (all = full_key).each_index { |ix| return ix if all[ix, search.length] == search } and nil
       end
-      
+
       def join_key(key)
         key.map { |k| k.to_s }.join('.').to_sym
       end

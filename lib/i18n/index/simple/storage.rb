@@ -15,10 +15,6 @@ module I18n
             exists?(options) ? load(options) : create(options)
           end
 
-          def delete_all(options)
-            FileUtils.rm_r(store_dir(options)) rescue Errno::ENOENT
-          end
-          
           protected
 
             def create(options = {})

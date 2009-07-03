@@ -7,7 +7,7 @@ class I18nCallReplaceTest < Test::Unit::TestCase
   end
 
   def teardown
-    @index.files.each { |file| FileUtils.mv("#{file}.backup", file) } if @index
+    @index.send(:files).each { |file| FileUtils.mv("#{file}.backup", file) } if @index
     @index.delete
   end
 

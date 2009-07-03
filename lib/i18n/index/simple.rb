@@ -1,11 +1,9 @@
-require 'i18n/index/simple/building'
 require 'i18n/index/simple/storage'
 require 'i18n/index/simple/data'
 
 module I18n
   module Index
     class Simple
-      include Building
       include Storage
 
       attr_accessor :root_dir, :pattern
@@ -16,21 +14,7 @@ module I18n
 
         options[:format].setup(self) if options[:format]
       end
-
-      def data
-        @data ||= Data.new
-        build unless built?
-        @data
-      end
       
-      def keys
-        data.keys
-      end
-      
-      def occurences
-        data.values.map { |value| value[:occurences] }.flatten
-      end
-
     	def find_call(*keys)
     		return unless key = data.keys.detect { |key, data| key.matches?(*keys) }
     		occurence = data.occurences(key).first
@@ -49,6 +33,48 @@ module I18n
         data.add(call)
         save if built?
       end
+      
+      def data
+        @data ||= Data.new
+        build unless built?
+        @data
+      end
+      
+      def keys
+        data.keys
+      end
+      
+      def occurences
+        data.values.map { |value| value[:occurences] }.flatten
+      end
+
+      def files
+        Dir[root_dir + '/' + pattern]
+      end
+
+      protected
+      
+        def reset!
+          @built = false
+          @data = nil
+        end
+    
+        def built?
+          @built
+        end
+
+        def build
+          reset!
+          @built = true
+          calls = files.inject([]) { |result, file| result += parse(file).translate_calls }
+          calls.each { |call| data.add(call) }
+        end
+
+        def parse(file)
+          source = File.read(file)
+          source = Erb::Stripper.new.to_ruby(source) if File.extname(file) == '.erb'
+          Index.parser.new(source, file).tap { |p| p.parse }
+        end
   	end
   end
 end

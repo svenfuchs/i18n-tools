@@ -3,7 +3,7 @@ require 'i18n/index/simple'
 require 'i18n/index/key'
 require 'i18n/index/occurence'
 require 'i18n/index/format'
-require 'i18n/ripper/ruby_builder'
+require 'i18n/ripper2ruby'
 
 module I18n
   module Index

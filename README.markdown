@@ -1,6 +1,8 @@
 I18n Tools
 ==========
 
+README is currently out of date. 
+
 Tools useful for working with Ruby/Rails I18n. Currently contains only the 
 source parser tool.
 
