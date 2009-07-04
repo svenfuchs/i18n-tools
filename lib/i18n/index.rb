@@ -9,7 +9,7 @@ module I18n
     mattr_accessor :pattern, :implementation, :parser, :filters
 
     @@implementation  = I18n::Index::Simple
-    @@parser          = I18n::Ripper::RubyBuilder
+    @@parser          = Ripper::RubyBuilder
     @@filters         = { '.erb' => lambda { |source| Erb::Stripper.new.to_ruby(source) } }
     @@pattern         = '**/*.{rb,erb}'
 
