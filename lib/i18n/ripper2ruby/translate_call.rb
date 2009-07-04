@@ -1,10 +1,39 @@
 module Ruby
+  class Node
+    def select_translate_calls(*args)
+      select(Ruby::Call, *args) { |node| node.is_translate_call? }.map { |call| call.to_translate_call }
+    end
+
+    def is_translate_call?
+      false
+    end
+  end
+
   class Call
     def to_translate_call
-      meta_class.send(:include, TranslateCall)
-      arguments.to_translate_args_list if arguments.respond_to?(:to_translate_args_list)
+      unless meta_class.include?(TranslateCall)
+        meta_class.send(:include, TranslateCall)
+        arguments.to_translate_args_list if arguments.respond_to?(:to_translate_args_list)
+      end
       self
     end
+
+    def is_translate_call?
+      identifier.try(:token) == 't' &&
+      is_translate_method_target?(target) &&
+      is_translate_key?(arguments.first.try(:arg))
+    end
+    
+    protected
+
+      def is_translate_method_target?(target)
+        target.nil? || target.try(:identifier).try(:token) == 'I18n'
+      end
+
+      def is_translate_key?(arg)
+        # TODO ... what to do with Arrays? what to do with DynaSymbols w/ embedded expressions?
+        arg && [Ruby::Symbol, Ruby::DynaSymbol, Ruby::String].include?(arg.class) && arg.try(:value)
+      end
   end
 
   module TranslateCall
@@ -29,8 +58,9 @@ module Ruby
     end
 
     def to_s(options = {})
-      "#{key}: #{filename} [#{row}/#{column}]\n" +
-      (options.has_key?(:context) ? self.context(options.update(:width => options[:context].to_i)) : '')
+      context = (options.has_key?(:context) ? self.context(options.update(:width => options[:context].to_i)) : '')
+      context = context.split("\n").map(&:strip).join("\n")
+      "#{key}: #{filename} [#{row}/#{column}]\n" + context
     end
   end
 end

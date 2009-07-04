@@ -1,4 +1,7 @@
-require 'rubygems'
+$:.unshift File.expand_path('/Users/sven/Development/projects/i18n/i18n-tools/lib')
+$:.unshift File.expand_path('/Users/sven/Development/projects/i18n/i18n-tools/vendor/ripper2ruby/lib')
+# require 'rubygems'
+
 require 'thor'
 require 'ripper2ruby'
 require 'i18n/commands/keys'

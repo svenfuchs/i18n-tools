@@ -7,7 +7,7 @@ require 'highlighters/ansi'
 module I18n
   module Commands
     class Keys
-      def initialize(highlighter = Highlighters::Ansi.new(:red, :bold), out = $stdout)
+      def initialize(highlighter = Highlighters::Ansi.new(:bold), out = $stdout)
         @highlighter = highlighter
         @out = out
       end
@@ -15,7 +15,7 @@ module I18n
       def find(keys, options = {})
         index = index(options)
         index.find_calls(*keys).each do |call|
-          log "\n" + call.to_s(:context => options[:context], :highlight => @highlighter)
+          log "\n" + call.to_s(:context => options[:context], :highlight => @highlighter).gsub(Dir.pwd, '')
         end
       end
 

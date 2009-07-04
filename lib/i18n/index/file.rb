@@ -9,7 +9,7 @@ module I18n
     end
     
   	class File
-  	  attr_accessor :path, :source
+  	  attr_accessor :path
 
   	  def initialize(path)
   	    self.path = path
@@ -20,26 +20,26 @@ module I18n
       end
 	    
 	    def ruby
-	      parser.ruby
+	      @ruby ||= parser.parse
       end
       
       def calls
-        parser.translate_calls
+        @calls ||= ruby.select_translate_calls
       end
       
       def update(source)
-        self.source = source
+        @source = source
         save
       end
 
 	    def save
-        ::File.open(path, 'w+') { |f| f.write(source) }
+        ::File.open(path, 'w+') { |f| f.write(source) } # TODO need to modify/write unfiltered source for ERB
       end
       
       protected
 
         def parser
-          @parser ||= Index.parser.new(source, path).tap { |p| p.parse }
+          @parser ||= Index.parser.new(source, path)
         end
 	  end
   end

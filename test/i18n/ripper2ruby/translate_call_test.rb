@@ -29,9 +29,7 @@ class I18nTranslateCallTest < Test::Unit::TestCase
   
   def test_collects_all_three_kinds_of_translate_calls
     src = "I18n.t(:foo); t('bar.baz', :scope => [:buz]); t :foo"
-    builder = I18n::Ripper::RubyBuilder.new(src)
-    builder.parse
-    assert_equal 3, builder.translate_calls.size
+    assert_equal 3, build(src).select_translate_calls.size
   end
   
   def test_call_to_translate_call
@@ -64,7 +62,7 @@ class I18nTranslateCallTest < Test::Unit::TestCase
     assert_equal [:foo, :bar, :baz], translate_call("t(:baz, :scope => :'foo.bar')").full_key
     assert_equal [:foo, :bar, :baz], translate_call("t(:baz, :scope => [:foo, :bar])").full_key
   end
-
+  
   def test_translate_call_key_matches?
     assert translate_call("t(:foo)").key_matches?(:foo)
   

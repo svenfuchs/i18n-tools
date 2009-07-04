@@ -7,7 +7,7 @@ module I18n
 
       def initialize(options = {})
         @root_dir = options[:root_dir] || Dir.pwd
-        @pattern = options[:pattern] || Index.default_pattern
+        @pattern = options[:pattern] || Index.pattern
         options[:format].setup(self) if options[:format]
       end
 

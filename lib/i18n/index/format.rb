@@ -39,7 +39,6 @@ module I18n
           end
 
           def parse(file)
-            # puts "  parsing #{::File.expand_path(file)}"
             format.out '.'
             super
           end

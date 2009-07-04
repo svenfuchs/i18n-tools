@@ -6,11 +6,11 @@ require 'i18n/ripper2ruby'
 
 module I18n
   module Index
-    mattr_accessor :default_pattern, :implementation, :parser, :filters
+    mattr_accessor :pattern, :implementation, :parser, :filters
 
     @@implementation  = I18n::Index::Simple
     @@parser          = I18n::Ripper::RubyBuilder
-    @@filters         = { :erb => lambda { |source| Erb::Stripper.new.to_ruby(source) } }
+    @@filters         = { '.erb' => lambda { |source| Erb::Stripper.new.to_ruby(source) } }
     @@pattern         = '**/*.{rb,erb}'
 
     class << self
@@ -24,7 +24,7 @@ module I18n
 
       def filter(source, filename)
         filters.each do |extname, filter|
-          source = filter.call(source) if ::File.extname(filename)[1, -1] == extname.to_s
+          source = filter.call(source) if ::File.extname(filename) == extname
         end
         source
       end

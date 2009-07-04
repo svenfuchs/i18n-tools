@@ -13,7 +13,7 @@ module Ruby
     end
 
     def key
-      eval(first.to_ruby) if first
+      first.arg.value if first
     end
 
     def scope

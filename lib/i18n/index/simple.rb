@@ -1,4 +1,4 @@
-require 'i18n/base'
+require 'i18n/index/base'
 require 'i18n/index/key'
 require 'i18n/index/occurence'
 require 'i18n/index/format'
@@ -14,15 +14,14 @@ module I18n
     	def find_call(*keys)
     		return unless key = data.keys.detect { |key, data| key.matches?(*keys) }
     		occurence = data.occurences(key).first
-    		# TODO cache parsed files on Index
-    		files[occurence.filename].ruby.select(Ruby::Call, :position => occurence.position).first
+    		files[occurence.filename].ruby.select_translate_calls(:position => occurence.position).first
     	end
 
     	def find_calls(*keys)
     		keys = data.keys.select { |key, data| key.matches?(*keys) }
     		occurences = keys.map { |key| data.occurences(key) }.flatten
     		occurences.map do |occurence|
-    		  files[occurence.filename].ruby.select(Ruby::Call, :position => occurence.position)
+    		  files[occurence.filename].ruby.select_translate_calls(:position => occurence.position)
   		  end.flatten
     	end
 
