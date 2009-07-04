@@ -1,10 +1,8 @@
-# TODO require gems instead
-$:.unshift File.expand_path(File.dirname(__FILE__) + '/lib')
-$:.unshift File.expand_path(File.dirname(__FILE__) + '/vendor/ripper2ruby/lib')
-
-require 'core_ext/hash/symbolize_keys'
-require 'i18n/commands/keys'
+require 'rubygems'
 require 'thor'
+require 'ripper2ruby'
+require 'i18n/commands/keys'
+require 'core_ext/hash/symbolize_keys'
 
 module I18n
   class Keys < Thor
