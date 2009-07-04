@@ -18,7 +18,7 @@ class I18nCallReplaceTest < Test::Unit::TestCase
   end
 
   def root(index)
-    I18n::Index.ruby(index.occurences.first.filename).root
+    index.files[index.occurences.first.filename].ruby.root
   end
 
   def assert_key_replacements(index, search, replace)

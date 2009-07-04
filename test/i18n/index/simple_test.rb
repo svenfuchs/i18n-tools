@@ -4,12 +4,10 @@ require 'i18n/index'
 require 'yaml'
 
 class I18nIndexSimpleTest < Test::Unit::TestCase
-  include I18n::Index
-
   def setup
     @root_dir = File.dirname(__FILE__) + '/../../fixtures'
     @filename = @root_dir + '/source_1.rb'
-    @index = Simple.new(:root_dir => @root_dir, :pattern => File.basename(@filename))
+    @index = I18n::Index::Simple.new(:root_dir => @root_dir, :pattern => File.basename(@filename))
     FileUtils.cp(@filename, "#{@filename}.backup")
   end
   
@@ -39,7 +37,7 @@ class I18nIndexSimpleTest < Test::Unit::TestCase
 
   define_method :"test update builds and saves index" do
     @index.update
-    index = Simple.send(:load, :root_dir => @root_dir)
+    index = I18n::Index::Simple.send(:load, :root_dir => @root_dir)
     assert_valid_index(index)
   end
   
@@ -56,14 +54,14 @@ class I18nIndexSimpleTest < Test::Unit::TestCase
     @index.replace_key(call, :bar, :bazooh)
     assert File.read(@filename) =~ /:bazooh/
 
-    index = Simple.send(:load, :root_dir => @root_dir) # reload the index
+    index = I18n::Index::Simple.send(:load, :root_dir => @root_dir) # reload the index
     call = index.find_call(:bar)
     assert call
     
     index.replace_key(call, :bar, :bazuuh)
     assert File.read(@filename) =~ /:bazuuh/
 
-    index = Simple.send(:load, :root_dir => @root_dir) # reload the index
+    index = I18n::Index::Simple.send(:load, :root_dir => @root_dir) # reload the index
     assert_nil index.find_call(:bar)
   end
 end

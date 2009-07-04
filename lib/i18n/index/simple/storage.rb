@@ -1,8 +1,6 @@
 module I18n
   module Index
-    class Simple
-      @@marshalled = [:root_dir, :pattern, :built, :data]
-      
+    class Simple < Base
       module Storage
         class << self
           def included(target)
@@ -72,13 +70,9 @@ module I18n
       def mkdir
         FileUtils.mkdir_p(store_dir) unless ::File.exists?(store_dir)
       end
-
-      def marshal_dump
-        @@marshalled.inject({}) { |result, key| result[key] = instance_variable_get(:"@#{key}"); result }
-      end
-
-      def marshal_load(data)
-        @@marshalled.each { |key| instance_variable_set(:"@#{key}", data[key]) }
+      
+      def marshalled_vars
+        super + [:built, :data]
       end
     end
   end

@@ -1,4 +1,5 @@
 require 'i18n/index'
+require 'i18n/exceptions/key_exists'
 require 'core_ext/hash/slice'
 require 'highline/import'
 require 'highlighters/ansi'

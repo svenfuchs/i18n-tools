@@ -1,6 +1,6 @@
 module I18n
   module Index
-    class Simple
+    class Simple < Base
       class Data < Hash
         def add(call)
     	    key = Key.new(call.full_key(true))

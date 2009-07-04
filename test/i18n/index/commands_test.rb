@@ -46,7 +46,7 @@ class I18nCommandsKeysTest < Test::Unit::TestCase
     assert_raises(I18n::MissingTranslationData) { I18n.t(:foo, :raise => true) }
     assert_match %r(baz\.bar), source(filename)
     assert_no_match %r(foo\.bar), source(filename)
-    assert_equal [:bar, :baaar, :"baz.fooo.baar", :bar_1, :"baz.bar"], indexed_keys
+    assert_equal [:bar, :baaar, :"baz.fooo.baar", :bar_1, :"baz.bar"].sort, indexed_keys.sort
       
     @commands.replace('baz.bar', 'bazzz', @options)
       
@@ -54,7 +54,7 @@ class I18nCommandsKeysTest < Test::Unit::TestCase
     assert_raises(I18n::MissingTranslationData) { I18n.t(:'baz.bar', :raise => true) }
     assert_match %r(bazzz), source(filename)
     assert_no_match %r(baz\.bar), source(filename)
-    assert_equal [:bar, :baaar, :"baz.fooo.baar", :bar_1, :"bazzz"], indexed_keys
+    assert_equal [:bar, :baaar, :"baz.fooo.baar", :bar_1, :"bazzz"].sort, indexed_keys.sort
   end
 
   protected
