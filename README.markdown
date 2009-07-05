@@ -23,6 +23,12 @@ You also need Thor to use the command line tool. You might experience problems
 getting Thor to behave under Ruby 1.9. Please let me know when I can remove 
 this notice ;)
 
+**Installation**
+
+	install i18n-tools (should require and install ripper2ruby)
+	install thor
+	thor install http://github.com/svenfuchs/i18n-tools/raw/master/i18n-tools.thor i18n-tools
+
 **Usage**
 
 	thor i18n:keys:find KEYS [--index] [--dir=DIR] [--pattern=PATTERN] [--context=N] 
@@ -66,13 +72,12 @@ this notice ;)
 	thor i18n:keys:find foo.* bar --index --dir=path/to/project --pattern=**/*.{rb,erb} --context=2
 	
 	
+**Notes**
+
 If you're using zsh arguments given with a wildcard are expanded to filenames
 before being passed. So <code>i18n-keys find foo.\*</code> won't work. You can
 either use quotes as in <code>i18n-keys find "foo.\*"</code> or turn zsh
 filename generation off with: <code>unsetopt GLOB</code>.
-
-Notes
-_____
 
 If you have Ruby 1.9 installed in parallel to 1.8.x you might want to install
 Thor with the -E option to make the executable wrapper use /usr/bin/env

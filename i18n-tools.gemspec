@@ -30,13 +30,10 @@ Gem::Specification.new do |s|
     lib/i18n/index/simple/storage.rb
     lib/i18n/index/simple.rb
     lib/i18n/index.rb
-    lib/i18n/ripper2ruby/ruby_builder.rb
     lib/i18n/ripper2ruby/translate_args_list.rb
     lib/i18n/ripper2ruby/translate_call.rb
     lib/i18n/ripper2ruby.rb
     lib/i18n/translation_properties.rb
-    MIT-LICENSE
-    README.markdown
   )
   s.test_files = %w(
     test/all.rb
@@ -60,8 +57,9 @@ Gem::Specification.new do |s|
     test/i18n/index/commands_test.rb
     test/i18n/index/key_test.rb
     test/i18n/index/simple_test.rb
-    test/i18n/ruby/translate_call_test.rb
-    test/test_helper.rb )
+    test/i18n/ripper2ruby/translate_call_test.rb
+    test/test_helper.rb 
+  )
   # s.add_dependency('svenfuchs-ripper2ruby', ['>= 0.0.1'])
   # s.executables = ['i18n-keys']
   # s.default_executable = 'i18n-keys'
