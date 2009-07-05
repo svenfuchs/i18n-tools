@@ -27,7 +27,7 @@ this notice ;)
 
 	install i18n-tools (should require and install ripper2ruby)
 	install thor
-	thor install http://github.com/svenfuchs/i18n-tools/raw/master/i18n-tools.thor i18n-tools
+	thor install http://github.com/svenfuchs/i18n-tools/raw/master/i18n-tools.thor --as i18n-tools
 
 **Usage**
 
